@@ -35,6 +35,9 @@ public class Language {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -44,5 +47,13 @@ public class Language {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 }

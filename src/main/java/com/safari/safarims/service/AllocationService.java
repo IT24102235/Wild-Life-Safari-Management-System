@@ -5,7 +5,7 @@ import com.safari.safarims.dto.allocation.AllocationResponse;
 import com.safari.safarims.entity.*;
 import com.safari.safarims.common.enums.AllocationStatus;
 import com.safari.safarims.common.enums.BookingStatus;
-import com.safari.safarims.common.enums.VehicleStatus;
+import com.safari.safarims.common.enums.JeepStatus;
 import com.safari.safarims.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +77,7 @@ public class AllocationService {
             jeep = jeepRepository.findById(request.getJeepId())
                 .orElseThrow(() -> new RuntimeException("Jeep not found"));
 
-            if (jeep.getStatus() != VehicleStatus.AVAILABLE) {
+            if (jeep.getStatus() != JeepStatus.AVAILABLE) {
                 throw new RuntimeException("Jeep is not available for allocation");
             }
 
@@ -110,7 +110,7 @@ public class AllocationService {
 
         // Update jeep status
         if (jeep != null) {
-            jeep.setStatus(VehicleStatus.ALLOCATED);
+            jeep.setStatus(JeepStatus.ALLOCATED);
             jeepRepository.save(jeep);
         }
 
@@ -146,7 +146,7 @@ public class AllocationService {
 
         // Release previous resources
         if (allocation.getJeep() != null) {
-            allocation.getJeep().setStatus(VehicleStatus.AVAILABLE);
+            allocation.getJeep().setStatus(JeepStatus.AVAILABLE);
             jeepRepository.save(allocation.getJeep());
         }
 
@@ -186,7 +186,7 @@ public class AllocationService {
             jeep = jeepRepository.findById(request.getJeepId())
                 .orElseThrow(() -> new RuntimeException("Jeep not found"));
 
-            if (jeep.getStatus() != VehicleStatus.AVAILABLE) {
+            if (jeep.getStatus() != JeepStatus.AVAILABLE) {
                 throw new RuntimeException("Jeep is not available for allocation");
             }
 
@@ -211,7 +211,7 @@ public class AllocationService {
 
         // Update new jeep status
         if (jeep != null) {
-            jeep.setStatus(VehicleStatus.ALLOCATED);
+            jeep.setStatus(JeepStatus.ALLOCATED);
             jeepRepository.save(jeep);
         }
 
@@ -233,7 +233,7 @@ public class AllocationService {
 
         // Release resources
         if (allocation.getJeep() != null) {
-            allocation.getJeep().setStatus(VehicleStatus.AVAILABLE);
+            allocation.getJeep().setStatus(JeepStatus.AVAILABLE);
             jeepRepository.save(allocation.getJeep());
         }
 

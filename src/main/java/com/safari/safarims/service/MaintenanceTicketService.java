@@ -7,7 +7,7 @@ import com.safari.safarims.entity.User;
 import com.safari.safarims.entity.Jeep;
 import com.safari.safarims.entity.Mechanic;
 import com.safari.safarims.common.enums.TicketStatus;
-import com.safari.safarims.common.enums.VehicleStatus;
+import com.safari.safarims.common.enums.JeepStatus;
 import com.safari.safarims.repository.MaintenanceTicketRepository;
 import com.safari.safarims.repository.UserRepository;
 import com.safari.safarims.repository.JeepRepository;
@@ -61,7 +61,7 @@ public class MaintenanceTicketService {
         // Update vehicle status to UNDER_REPAIR if severity is HIGH or CRITICAL
         if (request.getSeverity() == com.safari.safarims.common.enums.TicketSeverity.HIGH ||
             request.getSeverity() == com.safari.safarims.common.enums.TicketSeverity.CRITICAL) {
-            vehicle.setStatus(VehicleStatus.UNDER_REPAIR);
+            vehicle.setStatus(JeepStatus.UNDER_REPAIR);
             jeepRepository.save(vehicle);
         }
 
@@ -118,7 +118,7 @@ public class MaintenanceTicketService {
 
             // Update vehicle status back to AVAILABLE if resolved/closed
             Jeep vehicle = ticket.getVehicle();
-            vehicle.setStatus(VehicleStatus.AVAILABLE);
+            vehicle.setStatus(JeepStatus.AVAILABLE);
             jeepRepository.save(vehicle);
         }
 

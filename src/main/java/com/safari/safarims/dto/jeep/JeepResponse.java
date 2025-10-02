@@ -1,6 +1,6 @@
 package com.safari.safarims.dto.jeep;
 
-import com.safari.safarims.common.enums.VehicleStatus;
+import com.safari.safarims.common.enums.JeepStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,7 +14,7 @@ public class JeepResponse {
     private String plateNo;
     private String model;
     private Integer capacity;
-    private VehicleStatus status;
+    private JeepStatus status;
 
     private Long defaultDriverId;
     private String defaultDriverName;

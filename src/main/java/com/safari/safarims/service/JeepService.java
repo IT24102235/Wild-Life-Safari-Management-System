@@ -4,8 +4,7 @@ import com.safari.safarims.dto.jeep.JeepRequest;
 import com.safari.safarims.dto.jeep.JeepResponse;
 import com.safari.safarims.entity.Jeep;
 import com.safari.safarims.entity.Driver;
-import com.safari.safarims.common.enums.VehicleStatus;
-import com.safari.safarims.common.enums.AllocationStatus;
+import com.safari.safarims.common.enums.JeepStatus;
 import com.safari.safarims.repository.JeepRepository;
 import com.safari.safarims.repository.DriverRepository;
 import com.safari.safarims.repository.AllocationRepository;
@@ -34,7 +33,7 @@ public class JeepService {
     }
 
     public List<JeepResponse> getAvailableJeeps() {
-        List<VehicleStatus> availableStatuses = List.of(VehicleStatus.AVAILABLE);
+        List<JeepStatus> availableStatuses = List.of(JeepStatus.AVAILABLE);
         return jeepRepository.findByStatusIn(availableStatuses).stream()
             .map(this::mapToResponse)
             .collect(Collectors.toList());
@@ -67,7 +66,7 @@ public class JeepService {
             .model(request.getModel())
             .capacity(request.getCapacity())
             .defaultDriver(defaultDriver)
-            .status(VehicleStatus.AVAILABLE)
+            .status(JeepStatus.AVAILABLE)
             .build();
 
         jeep.setCreatedBy(currentUsername);
@@ -150,7 +149,7 @@ public class JeepService {
     }
 
     @Transactional
-    public void updateJeepStatus(Long jeepId, VehicleStatus status) {
+    public void updateJeepStatus(Long jeepId, JeepStatus status) {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Jeep jeep = jeepRepository.findById(jeepId)
@@ -187,7 +186,7 @@ public class JeepService {
             .updatedAt(jeep.getUpdatedAt())
             .createdBy(jeep.getCreatedBy())
             .updatedBy(jeep.getUpdatedBy())
-            .isAvailable(jeep.getStatus() == VehicleStatus.AVAILABLE)
+            .isAvailable(jeep.getStatus() == JeepStatus.AVAILABLE)
             .activeAllocationsCount(activeAllocationsCount)
             .build();
     }

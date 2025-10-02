@@ -2,7 +2,7 @@ package com.safari.safarims.controller;
 
 import com.safari.safarims.dto.jeep.JeepRequest;
 import com.safari.safarims.dto.jeep.JeepResponse;
-import com.safari.safarims.common.enums.VehicleStatus;
+import com.safari.safarims.common.enums.JeepStatus;
 import com.safari.safarims.service.JeepService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -108,7 +108,7 @@ public class JeepController {
     @PostMapping("/{id}/status")
     @Operation(summary = "Update jeep status", description = "Update jeep availability status")
     @PreAuthorize("hasRole('MAINTENANCE_OFFICER') or hasRole('TOUR_CREW_MANAGER') or hasRole('ADMIN')")
-    public ResponseEntity<Void> updateJeepStatus(@PathVariable Long id, @RequestParam VehicleStatus status) {
+    public ResponseEntity<Void> updateJeepStatus(@PathVariable Long id, @RequestParam JeepStatus status) {
         try {
             jeepService.updateJeepStatus(id, status);
             return ResponseEntity.ok().build();

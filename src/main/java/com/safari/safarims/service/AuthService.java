@@ -49,10 +49,8 @@ public class AuthService {
 
         // Create tourist profile
         Tourist tourist = Tourist.builder()
-            .id(user.getId())
             .user(user)
             .fullName(request.getFullName())
-            .phone(request.getPhone())
             .build();
 
         touristRepository.save(tourist);
