@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safari Management System - Tourist Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        safari: {
+                            green: '#2d5016',
+                            brown: '#8b4513',
+                            gold: '#ffd700'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-safari-green text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold">Safari Management System</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm">Welcome, <span id="username"></span></span>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Dashboard Header -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900">Tourist Dashboard</h2>
+            <p class="mt-2 text-gray-600">Explore and book your safari adventures</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="mb-6">
+            <nav class="flex space-x-8">
+                <button onclick="showTab('packages')" id="packagesTab" class="tab-button active">Available Packages</button>
+                <button onclick="showTab('bookings')" id="bookingsTab" class="tab-button">My Bookings</button>
+                <button onclick="showTab('profile')" id="profileTab" class="tab-button">Profile</button>
+            </nav>
+        </div>
+
+        <!-- Available Packages Tab -->
+        <div id="packagesContent" class="tab-content">
+            <div class="bg-white shadow rounded-lg p-6">
+                <h3 class="text-xl font-semibold mb-4">Available Safari Packages</h3>
+                <div id="packagesList" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <!-- Packages will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- My Bookings Tab -->
+        <div id="bookingsContent" class="tab-content hidden">
+            <div class="bg-white shadow rounded-lg p-6">
+                <h3 class="text-xl font-semibold mb-4">My Bookings</h3>
+                <div id="bookingsList">
+                    <!-- Bookings will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profileContent" class="tab-content hidden">
+            <div class="bg-white shadow rounded-lg p-6">
+                <h3 class="text-xl font-semibold mb-4">My Profile</h3>
+                <div id="profileForm">
+                    <!-- Profile form will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 class="text-lg font-semibold mb-4">Book Safari Package</h3>
+            <form id="bookingForm">
+                <input type="hidden" id="selectedPackageId">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Package</label>
+                    <p id="selectedPackageName" class="text-gray-900"></p>
+                </div>
+                <div class="mb-4">
+                    <label for="requestedDate" class="block text-sm font-medium text-gray-700">Date</label>
+                    <input type="date" id="requestedDate" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
+                </div>
+                <div class="mb-4">
+                    <label for="requestedTime" class="block text-sm font-medium text-gray-700">Time</label>
+                    <input type="time" id="requestedTime" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
+                </div>
+                <div class="mb-4">
+                    <label for="notes" class="block text-sm font-medium text-gray-700">Notes (Optional)</label>
+                    <textarea id="notes" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"></textarea>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeBookingModal()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-safari-green text-white rounded-md hover:bg-green-700">Create Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/v1';
+        let currentTab = 'packages';
+
+        // Check authentication
+        const token = localStorage.getItem('accessToken');
+        const username = localStorage.getItem('username');
+
+        if (!token || !username) {
+            window.location.href = '../index.html';
+        }
+
+        document.getElementById('username').textContent = username;
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('requestedDate').min = today;
+
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName + 'Content').classList.remove('hidden');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+
+            currentTab = tabName;
+
+            // Load content based on tab
+            if (tabName === 'packages') {
+                loadPackages();
+            } else if (tabName === 'bookings') {
+                loadBookings();
+            } else if (tabName === 'profile') {
+                loadProfile();
+            }
+        }
+
+        async function loadPackages() {
+            try {
+                const response = await fetch(`${API_BASE}/packages`);
+                const packages = await response.json();
+
+                const packagesList = document.getElementById('packagesList');
+                packagesList.innerHTML = packages.map(pkg => `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <h4 class="text-lg font-semibold text-safari-green">${pkg.name}</h4>
+                        <p class="text-gray-600 mt-1">${pkg.description || 'No description available'}</p>
+                        <div class="mt-3 space-y-1 text-sm text-gray-500">
+                            <p>Duration: ${pkg.days} day(s)</p>
+                            <p>Max People: ${pkg.maxPeople}</p>
+                            <p class="text-lg font-bold text-safari-brown">$${pkg.price}</p>
+                        </div>
+                        <button onclick="openBookingModal(${pkg.id}, '${pkg.name}')"
+                                class="mt-4 w-full bg-safari-green text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
+                            Book Now
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading packages:', error);
+                showMessage('Error loading packages', 'error');
+            }
+        }
+
+        async function loadBookings() {
+            try {
+                const response = await fetch(`${API_BASE}/bookings/my-bookings`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const bookings = await response.json();
+
+                const bookingsList = document.getElementById('bookingsList');
+
+                if (bookings.length === 0) {
+                    bookingsList.innerHTML = '<p class="text-gray-500">No bookings found. Create your first booking from the packages tab!</p>';
+                } else {
+                    bookingsList.innerHTML = bookings.map(booking => `
+                        <div class="border border-gray-200 rounded-lg p-4 mb-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="text-lg font-semibold">Booking #${booking.id}</h4>
+                                    <p class="text-gray-600">${booking.packageName}</p>
+                                    <p class="text-sm text-gray-500">Date: ${booking.requestedDate} at ${booking.requestedTime}</p>
+                                    <p class="text-sm text-gray-500">Amount: $${booking.totalAmount}</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(booking.status)}">
+                                        ${booking.status}
+                                    </span>
+                                    ${booking.canEdit ? `
+                                        <div class="mt-2 space-x-2">
+                                            <button onclick="editBooking(${booking.id})" class="text-blue-600 hover:text-blue-800 text-sm">Edit</button>
+                                            <button onclick="cancelBooking(${booking.id})" class="text-red-600 hover:text-red-800 text-sm">Cancel</button>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Edit window expires: ${new Date(booking.editWindowExpires).toLocaleString()}</p>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                showMessage('Error loading bookings', 'error');
+            }
+        }
+
+        function openBookingModal(packageId, packageName) {
+            document.getElementById('selectedPackageId').value = packageId;
+            document.getElementById('selectedPackageName').textContent = packageName;
+            document.getElementById('bookingModal').classList.remove('hidden');
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.add('hidden');
+            document.getElementById('bookingForm').reset();
+        }
+
+        document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                packageId: parseInt(document.getElementById('selectedPackageId').value),
+                requestedDate: document.getElementById('requestedDate').value,
+                requestedTime: document.getElementById('requestedTime').value,
+                notes: document.getElementById('notes').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/bookings`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    showMessage('Booking created successfully!', 'success');
+                    closeBookingModal();
+                    if (currentTab === 'bookings') {
+                        loadBookings();
+                    }
+                } else {
+                    const error = await response.json();
+                    showMessage(error.message || 'Error creating booking', 'error');
+                }
+            } catch (error) {
+                console.error('Error creating booking:', error);
+                showMessage('Network error. Please try again.', 'error');
+            }
+        });
+
+        function getStatusColor(status) {
+            const colors = {
+                'REQUESTED': 'bg-yellow-100 text-yellow-800',
+                'FORWARDED_TO_CREW': 'bg-blue-100 text-blue-800',
+                'ALLOCATED': 'bg-purple-100 text-purple-800',
+                'CONFIRMATION_SENT': 'bg-indigo-100 text-indigo-800',
+                'PENDING_PAYMENT': 'bg-orange-100 text-orange-800',
+                'CONFIRMED': 'bg-green-100 text-green-800',
+                'CANCELLED': 'bg-red-100 text-red-800',
+                'EXPIRED': 'bg-gray-100 text-gray-800'
+            };
+            return colors[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '../index.html';
+        }
+
+        function showMessage(message, type) {
+            // Simple alert for now - could be enhanced with better UI
+            alert(message);
+        }
+
+        // Initialize
+        showTab('packages');
+    </script>
+
+    <style>
+        .tab-button {
+            @apply py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300;
+        }
+        .tab-button.active {
+            @apply text-safari-green border-safari-green;
+        }
+    </style>
+</body>
+</html>

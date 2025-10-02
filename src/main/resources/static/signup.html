@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safari Management System - Tourist Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        safari: {
+                            green: '#2d5016',
+                            brown: '#8b4513',
+                            gold: '#ffd700'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-green-100 to-brown-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full mx-4">
+        <div class="bg-white rounded-lg shadow-xl p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-safari-green">Join Safari Adventures</h1>
+                <p class="text-gray-600 mt-2">Create your tourist account</p>
+            </div>
+
+            <!-- Registration Form -->
+            <form id="registrationForm" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" id="username" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green">
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="email" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green">
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green">
+                    <p class="text-xs text-gray-500 mt-1">At least 8 characters with 1 special character</p>
+                </div>
+
+                <div>
+                    <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input type="text" id="fullName" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green">
+                </div>
+
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                    <input type="tel" id="phone"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green">
+                </div>
+
+                <div>
+                    <button type="submit"
+                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-safari-green hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-safari-green">
+                        Create Account
+                    </button>
+                </div>
+            </form>
+
+            <!-- OTP Verification Form (Initially Hidden) -->
+            <form id="otpForm" class="space-y-6 hidden">
+                <div class="text-center">
+                    <h3 class="text-lg font-medium text-gray-900">Verify Your Email</h3>
+                    <p class="text-sm text-gray-600">We've sent a 6-digit code to your email</p>
+                </div>
+
+                <div>
+                    <label for="otp" class="block text-sm font-medium text-gray-700">Enter OTP</label>
+                    <input type="text" id="otp" maxlength="6" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green text-center text-2xl">
+                </div>
+
+                <div>
+                    <button type="submit"
+                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-safari-green hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-safari-green">
+                        Verify & Complete Registration
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6 text-center">
+                <div class="text-sm text-gray-600">
+                    Already have an account?
+                    <a href="index.html" class="text-safari-green hover:text-green-700 font-medium">Sign in</a>
+                </div>
+            </div>
+
+            <div id="messageDiv" class="mt-4 hidden">
+                <div class="px-4 py-3 rounded-md text-sm"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/v1';
+        let registrationEmail = '';
+
+        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                fullName: document.getElementById('fullName').value,
+                phone: document.getElementById('phone').value
+            };
+
+            registrationEmail = formData.email;
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/register/tourist`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage(data.message, 'success');
+                    document.getElementById('registrationForm').classList.add('hidden');
+                    document.getElementById('otpForm').classList.remove('hidden');
+                } else {
+                    showMessage(data.message || 'Registration failed', 'error');
+                }
+            } catch (error) {
+                showMessage('Network error. Please try again.', 'error');
+                console.error('Registration error:', error);
+            }
+        });
+
+        document.getElementById('otpForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const otp = document.getElementById('otp').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/verify-signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: registrationEmail,
+                        otp: otp
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.accessToken) {
+                    // Store tokens
+                    localStorage.setItem('accessToken', data.accessToken);
+                    localStorage.setItem('refreshToken', data.refreshToken);
+                    localStorage.setItem('userRole', data.role);
+                    localStorage.setItem('username', data.username);
+
+                    showMessage('Registration successful! Redirecting to dashboard...', 'success');
+
+                    setTimeout(() => {
+                        window.location.href = 'dashboards/tourist.html';
+                    }, 2000);
+                } else {
+                    showMessage(data.message || 'OTP verification failed', 'error');
+                }
+            } catch (error) {
+                showMessage('Network error. Please try again.', 'error');
+                console.error('OTP verification error:', error);
+            }
+        });
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('messageDiv');
+            const messageContent = messageDiv.querySelector('div');
+
+            messageContent.textContent = message;
+            messageDiv.classList.remove('hidden');
+
+            if (type === 'success') {
+                messageContent.className = 'bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-md text-sm';
+            } else {
+                messageContent.className = 'bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm';
+            }
+
+            if (type === 'error') {
+                setTimeout(() => {
+                    messageDiv.classList.add('hidden');
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>
