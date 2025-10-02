@@ -3,207 +3,745 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safari Management System - Tourist Registration</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        safari: {
-                            green: '#2d5016',
-                            brown: '#8b4513',
-                            gold: '#ffd700'
-                        }
-                    }
-                }
+    <title>Sign Up - Ranweli Safari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-primary);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .signup-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 0.5rem;
+        }
+
+        .signup-tab {
+            flex: 1;
+            padding: 0.75rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .signup-tab.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .signup-content {
+            display: none;
+        }
+
+        .signup-content.active {
+            display: block;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(44, 85, 48, 0.1);
+        }
+
+        .form-label {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            background: white;
+            padding: 0 0.5rem;
+        }
+
+        .form-control:focus + .form-label,
+        .form-control:not(:placeholder-shown) + .form-label {
+            top: 0;
+            font-size: 0.875rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .password-strength {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            display: none;
+        }
+
+        .strength-weak {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .strength-medium {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .strength-strong {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .terms-checkbox input[type="checkbox"] {
+            margin-top: 0.2rem;
+            transform: scale(1.2);
+        }
+
+        .terms-checkbox a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(44, 85, 48, 0.3);
+        }
+
+        .auth-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .booking-form {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .package-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .package-option {
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            background: white;
+        }
+
+        .package-option:hover,
+        .package-option.selected {
+            border-color: var(--primary-color);
+            background: #f0f8ff;
+        }
+
+        .package-price {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .date-time-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .auth-footer {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .auth-footer p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .auth-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-home:hover {
+            transform: translateX(-5px);
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                padding: 1rem;
+            }
+
+            .auth-card {
+                padding: 2rem;
+            }
+
+            .form-row,
+            .date-time-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .package-selection {
+                grid-template-columns: 1fr;
             }
         }
-    </script>
+    </style>
 </head>
-<body class="bg-gradient-to-br from-green-100 to-brown-100 min-h-screen flex items-center justify-center">
-    <div class="max-w-md w-full mx-4">
-        <div class="bg-white rounded-lg shadow-xl p-8">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-safari-green">Join Safari Adventures</h1>
-                <p class="text-gray-600 mt-2">Create your tourist account</p>
+<body>
+    <div class="auth-container">
+        <a href="/" class="back-home">
+            ← Back to Home
+        </a>
+
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">🦁</div>
+                <h1 class="auth-title">Join Ranweli Safari</h1>
+                <p class="auth-subtitle">Create your account and book your adventure</p>
             </div>
+
+            <!-- Signup Tabs -->
+            <div class="signup-tabs">
+                <button class="signup-tab active" data-tab="register">Create Account</button>
+                <button class="signup-tab" data-tab="book">Book Safari</button>
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
 
             <!-- Registration Form -->
-            <form id="registrationForm" class="space-y-6">
-                <div>
-                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                    <input type="text" id="username" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green">
-                </div>
+            <div class="signup-content active" id="register">
+                <form class="auth-form" id="registerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="firstName" placeholder=" " required>
+                            <label class="form-label" for="firstName">First Name</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="lastName" placeholder=" " required>
+                            <label class="form-label" for="lastName">Last Name</label>
+                        </div>
+                    </div>
 
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" id="email" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green">
-                </div>
+                    <div class="form-group">
+                        <input type="email" class="form-control" id="email" placeholder=" " required>
+                        <label class="form-label" for="email">Email Address</label>
+                    </div>
 
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="password" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green">
-                    <p class="text-xs text-gray-500 mt-1">At least 8 characters with 1 special character</p>
-                </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="tel" class="form-control" id="phone" placeholder=" " required>
+                            <label class="form-label" for="phone">Phone Number</label>
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control" id="nationality" required>
+                                <option value="">Select Nationality</option>
+                                <option value="LK">Sri Lankan</option>
+                                <option value="US">American</option>
+                                <option value="UK">British</option>
+                                <option value="AU">Australian</option>
+                                <option value="CA">Canadian</option>
+                                <option value="DE">German</option>
+                                <option value="FR">French</option>
+                                <option value="JP">Japanese</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
 
-                <div>
-                    <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
-                    <input type="text" id="fullName" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green">
-                </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" id="password" placeholder=" " required
+                               onkeyup="checkPasswordStrength(this.value)">
+                        <label class="form-label" for="password">Password</label>
+                        <div id="passwordStrength" class="password-strength"></div>
+                    </div>
 
-                <div>
-                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
-                    <input type="tel" id="phone"
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green">
-                </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" id="confirmPassword" placeholder=" " required>
+                        <label class="form-label" for="confirmPassword">Confirm Password</label>
+                    </div>
 
-                <div>
-                    <button type="submit"
-                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-safari-green hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-safari-green">
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">
+                            I agree to the <a href="#" onclick="showTerms()">Terms of Service</a> and
+                            <a href="#" onclick="showPrivacy()">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="auth-btn">
+                        <div class="loading-spinner"></div>
                         Create Account
                     </button>
-                </div>
-            </form>
-
-            <!-- OTP Verification Form (Initially Hidden) -->
-            <form id="otpForm" class="space-y-6 hidden">
-                <div class="text-center">
-                    <h3 class="text-lg font-medium text-gray-900">Verify Your Email</h3>
-                    <p class="text-sm text-gray-600">We've sent a 6-digit code to your email</p>
-                </div>
-
-                <div>
-                    <label for="otp" class="block text-sm font-medium text-gray-700">Enter OTP</label>
-                    <input type="text" id="otp" maxlength="6" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green text-center text-2xl">
-                </div>
-
-                <div>
-                    <button type="submit"
-                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-safari-green hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-safari-green">
-                        Verify & Complete Registration
-                    </button>
-                </div>
-            </form>
-
-            <div class="mt-6 text-center">
-                <div class="text-sm text-gray-600">
-                    Already have an account?
-                    <a href="index.html" class="text-safari-green hover:text-green-700 font-medium">Sign in</a>
-                </div>
+                </form>
             </div>
 
-            <div id="messageDiv" class="mt-4 hidden">
-                <div class="px-4 py-3 rounded-md text-sm"></div>
+            <!-- Booking Form -->
+            <div class="signup-content" id="book">
+                <form class="auth-form" id="bookingForm">
+                    <div class="booking-form">
+                        <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Select Safari Package</h4>
+
+                        <div class="package-selection">
+                            <div class="package-option" data-package="morning" data-price="75">
+                                <div>🌅</div>
+                                <div><strong>Morning Safari</strong></div>
+                                <div class="package-price">$75</div>
+                                <div style="font-size: 0.8rem;">3 hours</div>
+                            </div>
+
+                            <div class="package-option" data-package="evening" data-price="85">
+                                <div>🌇</div>
+                                <div><strong>Evening Safari</strong></div>
+                                <div class="package-price">$85</div>
+                                <div style="font-size: 0.8rem;">3 hours</div>
+                            </div>
+
+                            <div class="package-option" data-package="fullday" data-price="150">
+                                <div>☀️</div>
+                                <div><strong>Full Day</strong></div>
+                                <div class="package-price">$150</div>
+                                <div style="font-size: 0.8rem;">12 hours</div>
+                            </div>
+                        </div>
+
+                        <div class="date-time-selection">
+                            <div class="form-group">
+                                <input type="date" class="form-control" id="safariDate" required
+                                       min="" style="padding-top: 1rem; padding-bottom: 1rem;">
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control" id="safariTime" required>
+                                    <option value="">Select Time</option>
+                                    <option value="06:00">6:00 AM</option>
+                                    <option value="09:00">9:00 AM</option>
+                                    <option value="14:00">2:00 PM</option>
+                                    <option value="15:30">3:30 PM</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="number" class="form-control" id="participants" min="1" max="8" value="2" placeholder=" " required>
+                            <label class="form-label" for="participants">Number of Participants</label>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="bookingFirstName" placeholder=" " required>
+                            <label class="form-label" for="bookingFirstName">First Name</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="bookingLastName" placeholder=" " required>
+                            <label class="form-label" for="bookingLastName">Last Name</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="email" class="form-control" id="bookingEmail" placeholder=" " required>
+                        <label class="form-label" for="bookingEmail">Email Address</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="tel" class="form-control" id="bookingPhone" placeholder=" " required>
+                        <label class="form-label" for="bookingPhone">Phone Number</label>
+                    </div>
+
+                    <div class="form-group">
+                        <textarea class="form-control" id="specialRequests" placeholder="Any special requirements or dietary restrictions..."></textarea>
+                    </div>
+
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="bookingTerms" required>
+                        <label for="bookingTerms">
+                            I agree to the booking terms and conditions
+                        </label>
+                    </div>
+
+                    <button type="submit" class="auth-btn">
+                        <div class="loading-spinner"></div>
+                        Book Safari - <span id="totalPrice">$0</span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="auth-footer">
+                <p>Already have an account?</p>
+                <a href="login.html">Sign In</a>
             </div>
         </div>
     </div>
 
+    <script src="js/main.js"></script>
     <script>
-        const API_BASE = '/api/v1';
-        let registrationEmail = '';
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize signup tabs
+            initSignupTabs();
 
-        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+            // Initialize package selection
+            initPackageSelection();
 
-            const formData = {
-                username: document.getElementById('username').value,
-                email: document.getElementById('email').value,
-                password: document.getElementById('password').value,
-                fullName: document.getElementById('fullName').value,
-                phone: document.getElementById('phone').value
-            };
+            // Set minimum date to today
+            document.getElementById('safariDate').min = new Date().toISOString().split('T')[0];
 
-            registrationEmail = formData.email;
-
-            try {
-                const response = await fetch(`${API_BASE}/auth/register/tourist`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    showMessage(data.message, 'success');
-                    document.getElementById('registrationForm').classList.add('hidden');
-                    document.getElementById('otpForm').classList.remove('hidden');
-                } else {
-                    showMessage(data.message || 'Registration failed', 'error');
-                }
-            } catch (error) {
-                showMessage('Network error. Please try again.', 'error');
-                console.error('Registration error:', error);
-            }
+            // Form submissions
+            document.getElementById('registerForm').addEventListener('submit', handleRegistration);
+            document.getElementById('bookingForm').addEventListener('submit', handleBooking);
         });
 
-        document.getElementById('otpForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        function initSignupTabs() {
+            const tabs = document.querySelectorAll('.signup-tab');
+            const contents = document.querySelectorAll('.signup-content');
 
-            const otp = document.getElementById('otp').value;
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetTab = tab.dataset.tab;
 
-            try {
-                const response = await fetch(`${API_BASE}/auth/verify-signup`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email: registrationEmail,
-                        otp: otp
-                    })
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
                 });
+            });
+        }
 
-                const data = await response.json();
+        function initPackageSelection() {
+            const packages = document.querySelectorAll('.package-option');
 
-                if (response.ok && data.accessToken) {
-                    // Store tokens
-                    localStorage.setItem('accessToken', data.accessToken);
-                    localStorage.setItem('refreshToken', data.refreshToken);
-                    localStorage.setItem('userRole', data.role);
-                    localStorage.setItem('username', data.username);
+            packages.forEach(pkg => {
+                pkg.addEventListener('click', () => {
+                    packages.forEach(p => p.classList.remove('selected'));
+                    pkg.classList.add('selected');
 
-                    showMessage('Registration successful! Redirecting to dashboard...', 'success');
+                    const price = pkg.dataset.price;
+                    const participants = document.getElementById('participants').value || 1;
+                    updateTotalPrice(price, participants);
+                });
+            });
 
-                    setTimeout(() => {
-                        window.location.href = 'dashboards/tourist.html';
-                    }, 2000);
-                } else {
-                    showMessage(data.message || 'OTP verification failed', 'error');
+            document.getElementById('participants').addEventListener('input', function() {
+                const selectedPackage = document.querySelector('.package-option.selected');
+                if (selectedPackage) {
+                    const price = selectedPackage.dataset.price;
+                    updateTotalPrice(price, this.value);
                 }
-            } catch (error) {
-                showMessage('Network error. Please try again.', 'error');
-                console.error('OTP verification error:', error);
-            }
-        });
+            });
+        }
 
-        function showMessage(message, type) {
-            const messageDiv = document.getElementById('messageDiv');
-            const messageContent = messageDiv.querySelector('div');
+        function updateTotalPrice(pricePerPerson, participants) {
+            const total = pricePerPerson * participants;
+            document.getElementById('totalPrice').textContent = `$${total}`;
+        }
 
-            messageContent.textContent = message;
-            messageDiv.classList.remove('hidden');
+        function checkPasswordStrength(password) {
+            const strengthDiv = document.getElementById('passwordStrength');
+            strengthDiv.style.display = 'block';
 
-            if (type === 'success') {
-                messageContent.className = 'bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-md text-sm';
+            let strength = 0;
+            let feedback = [];
+
+            if (password.length >= 8) strength++;
+            else feedback.push('At least 8 characters');
+
+            if (/[A-Z]/.test(password)) strength++;
+            else feedback.push('One uppercase letter');
+
+            if (/[a-z]/.test(password)) strength++;
+            else feedback.push('One lowercase letter');
+
+            if (/[0-9]/.test(password)) strength++;
+            else feedback.push('One number');
+
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            else feedback.push('One special character');
+
+            if (strength <= 2) {
+                strengthDiv.className = 'password-strength strength-weak';
+                strengthDiv.textContent = 'Weak: ' + feedback.join(', ');
+            } else if (strength <= 4) {
+                strengthDiv.className = 'password-strength strength-medium';
+                strengthDiv.textContent = 'Medium: ' + feedback.join(', ');
             } else {
-                messageContent.className = 'bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm';
+                strengthDiv.className = 'password-strength strength-strong';
+                strengthDiv.textContent = 'Strong password!';
+            }
+        }
+
+        async function handleRegistration(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+
+            // Validate passwords match
+            if (data.password !== data.confirmPassword) {
+                showErrorMessage('Passwords do not match');
+                return;
             }
 
-            if (type === 'error') {
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const spinner = submitBtn.querySelector('.loading-spinner');
+
+            // Show loading state
+            submitBtn.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            try {
+                await SafariApp.Auth.register(data);
+                showSuccessMessage('Account created successfully! Please check your email to verify your account.');
+                e.target.reset();
+
+                // Switch to login after 3 seconds
                 setTimeout(() => {
-                    messageDiv.classList.add('hidden');
-                }, 5000);
+                    window.location.href = 'login.html';
+                }, 3000);
+
+            } catch (error) {
+                showErrorMessage(error.message || 'Failed to create account. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                spinner.style.display = 'none';
             }
+        }
+
+        async function handleBooking(e) {
+            e.preventDefault();
+
+            const selectedPackage = document.querySelector('.package-option.selected');
+            if (!selectedPackage) {
+                showErrorMessage('Please select a safari package');
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+
+            // Add package information
+            data.packageType = selectedPackage.dataset.package;
+            data.pricePerPerson = selectedPackage.dataset.price;
+            data.totalAmount = selectedPackage.dataset.price * data.participants;
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const spinner = submitBtn.querySelector('.loading-spinner');
+
+            // Show loading state
+            submitBtn.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            try {
+                const response = await SafariApp.API.post('/api/bookings/create', data);
+                showSuccessMessage('Booking created successfully! Redirecting to payment...');
+
+                // Redirect to payment page
+                setTimeout(() => {
+                    window.location.href = `payment.html?booking=${response.bookingId}`;
+                }, 2000);
+
+            } catch (error) {
+                showErrorMessage(error.message || 'Failed to create booking. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                spinner.style.display = 'none';
+            }
+        }
+
+        function showTerms() {
+            alert('Terms of Service would be displayed here');
+        }
+
+        function showPrivacy() {
+            alert('Privacy Policy would be displayed here');
+        }
+
+        function showErrorMessage(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            hideSuccessMessage();
+        }
+
+        function showSuccessMessage(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            hideErrorMessage();
+        }
+
+        function hideErrorMessage() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function hideSuccessMessage() {
+            document.getElementById('successMessage').style.display = 'none';
         }
     </script>
 </body>
 </html>
+

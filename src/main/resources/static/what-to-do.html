@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What To Do - Ranweli Safari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .activities-section {
+            padding: 6rem 0 2rem;
+        }
+
+        .activities-hero {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .activity-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .activity-tab {
+            padding: 1rem 2rem;
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .activity-tab.active,
+        .activity-tab:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .activity-content {
+            display: none;
+        }
+
+        .activity-content.active {
+            display: block;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .activity-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .activity-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .activity-info {
+            padding: 2rem;
+        }
+
+        .activity-info h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .activity-meta {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .difficulty {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .difficulty.easy { background: #d4edda; color: #155724; }
+        .difficulty.moderate { background: #fff3cd; color: #856404; }
+        .difficulty.challenging { background: #f8d7da; color: #721c24; }
+
+        .park-map {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .map-container {
+            position: relative;
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8ff 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid var(--primary-color);
+        }
+
+        .map-placeholder {
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .map-legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .wildlife-spotting {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+
+        .wildlife-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .wildlife-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .wildlife-card:hover {
+            transform: scale(1.05);
+        }
+
+        .wildlife-emoji {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .wildlife-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .best-time {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        .photography-tips {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin: 3rem 0;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tip-card {
+            border-left: 4px solid var(--accent-color);
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .tip-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .package-showcase {
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .package-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .package-card:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-5px);
+        }
+
+        .package-price {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .package-features {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        .package-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .package-features li:last-child {
+            border-bottom: none;
+        }
+
+        .interactive-map {
+            position: relative;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .map-zones {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: #ddd;
+        }
+
+        .map-zone {
+            aspect-ratio: 1;
+            background: #e8f5e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .map-zone:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .zone-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.8rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .map-zone:hover .zone-info {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">Ranweli Safari</a>
+
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="visitor-guide.html">Visitor Guide</a></li>
+                <li><a href="what-to-do.html" class="active">What To Do</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="signup.html" class="btn btn-primary">Book Safari</a>
+            </div>
+
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="activities-hero">
+        <div class="container">
+            <h1 class="fade-in">What To Do at Ranweli</h1>
+            <p class="fade-in" style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">
+                Discover endless adventures and unforgettable experiences in Sri Lanka's premier national park
+            </p>
+        </div>
+    </section>
+
+    <!-- Activities Section -->
+    <section class="activities-section">
+        <div class="container">
+            <!-- Activity Tabs -->
+            <div class="activity-tabs fade-in">
+                <button class="activity-tab active" data-tab="activities">Safari Activities</button>
+                <button class="activity-tab" data-tab="wildlife">Wildlife Watching</button>
+                <button class="activity-tab" data-tab="photography">Photography</button>
+                <button class="activity-tab" data-tab="map">Park Map</button>
+            </div>
+
+            <!-- Safari Activities Content -->
+            <div class="activity-content active" id="activities">
+                <div class="section-header">
+                    <h2 class="section-title">Safari Activities</h2>
+                    <p class="section-subtitle">Choose from our exciting range of safari experiences</p>
+                </div>
+
+                <div class="activity-grid">
+                    <div class="activity-card fade-in">
+                        <div class="activity-image" style="background-image: url('https://images.unsplash.com/photo-1549366021-9f761d040a94?w=800');">
+                            <div class="activity-badge">Most Popular</div>
+                        </div>
+                        <div class="activity-info">
+                            <h3>Game Drive Safari</h3>
+                            <p>The classic safari experience in our comfortable 4x4 vehicles. Perfect for first-time visitors and families.</p>
+                            <div class="activity-meta">
+                                <div class="meta-item">
+                                    <span>🕐</span>
+                                    <span>3-6 hours</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span>👥</span>
+                                    <span>Up to 6 people</span>
+                                </div>
+                                <div class="difficulty easy">Easy</div>
+                            </div>
+                            <p><strong>What to expect:</strong> Close encounters with elephants, leopards, and diverse bird species in their natural habitat.</p>
+                        </div>
+                    </div>
+
+                    <div class="activity-card fade-in">
+                        <div class="activity-image" style="background-image: url('https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800');">
+                            <div class="activity-badge">Romantic</div>
+                        </div>
+                        <div class="activity-info">
+                            <h3>Sunset Safari</h3>
+                            <p>Experience the magic of African sunset while watching wildlife in golden hour lighting.</p>
+                            <div class="activity-meta">
+                                <div class="meta-item">
+                                    <span>🕐</span>
+                                    <span>3 hours</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span>👥</span>
+                                    <span>Up to 4 people</span>
+                                </div>
+                                <div class="difficulty easy">Easy</div>
+                            </div>
+                            <p><strong>What to expect:</strong> Stunning sunset views, increased animal activity, and perfect photography conditions.</p>
+                        </div>
+                    </div>
+
+                    <div class="activity-card fade-in">
+                        <div class="activity-image" style="background-image: url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800');">
+                            <div class="activity-badge">Early Bird</div>
+                        </div>
+                        <div class="activity-info">
+                            <h3>Dawn Safari</h3>
+                            <p>Start your day with the most active wildlife period when animals are hunting and feeding.</p>
+                            <div class="activity-meta">
+                                <div class="meta-item">
+                                    <span>🕐</span>
+                                    <span>3 hours</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span>👥</span>
+                                    <span>Up to 6 people</span>
+                                </div>
+                                <div class="difficulty moderate">Moderate</div>
+                            </div>
+                            <p><strong>What to expect:</strong> High wildlife activity, cool temperatures, and spectacular sunrise views over the park.</p>
+                        </div>
+                    </div>
+
+                    <div class="activity-card fade-in">
+                        <div class="activity-image" style="background-image: url('https://images.unsplash.com/photo-1551969014-7d2c4cddf0b6?w=800');">
+                            <div class="activity-badge">Premium</div>
+                        </div>
+                        <div class="activity-info">
+                            <h3>Leopard Tracking</h3>
+                            <p>Specialized safari focused on tracking and observing the elusive Sri Lankan leopard.</p>
+                            <div class="activity-meta">
+                                <div class="meta-item">
+                                    <span>🕐</span>
+                                    <span>4-6 hours</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span>👥</span>
+                                    <span>Up to 4 people</span>
+                                </div>
+                                <div class="difficulty challenging">Challenging</div>
+                            </div>
+                            <p><strong>What to expect:</strong> Expert tracking, patience required, but incredible rewards when leopards are spotted.</p>
+                        </div>
+                    </div>
+
+                    <div class="activity-card fade-in">
+                        <div class="activity-image" style="background-image: url('https://images.unsplash.com/photo-1444927714506-8492d94b5ba0?w=800');">
+                            <div class="activity-badge">Specialist</div>
+                        </div>
+                        <div class="activity-info">
+                            <h3>Bird Watching Safari</h3>
+                            <p>Dedicated birding experience with expert ornithologists and specialized equipment.</p>
+                            <div class="activity-meta">
+                                <div class="meta-item">
+                                    <span>🕐</span>
+                                    <span>4 hours</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span>👥</span>
+                                    <span>Up to 8 people</span>
+                                </div>
+                                <div class="difficulty easy">Easy</div>
+                            </div>
+                            <p><strong>What to expect:</strong> Over 200 bird species, including endemic varieties, with provided binoculars and field guides.</p>
+                        </div>
+                    </div>
+
+                    <div class="activity-card fade-in">
+                        <div class="activity-image" style="background-image: url('https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=800');">
+                            <div class="activity-badge">Full Day</div>
+                        </div>
+                        <div class="activity-info">
+                            <h3>Complete Safari Experience</h3>
+                            <p>Full day adventure covering all zones of the park with lunch and multiple game drives.</p>
+                            <div class="activity-meta">
+                                <div class="meta-item">
+                                    <span>🕐</span>
+                                    <span>12 hours</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span>👥</span>
+                                    <span>Up to 6 people</span>
+                                </div>
+                                <div class="difficulty moderate">Moderate</div>
+                            </div>
+                            <p><strong>What to expect:</strong> Comprehensive park tour, picnic lunch, maximum wildlife encounters, and park map exploration.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wildlife Watching Content -->
+            <div class="activity-content" id="wildlife">
+                <div class="section-header">
+                    <h2 class="section-title">Wildlife Watching Guide</h2>
+                    <p class="section-subtitle">Learn about the incredible animals you might encounter</p>
+                </div>
+
+                <div class="wildlife-spotting fade-in">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">🔍 Wildlife Spotting Guide</h3>
+                    <p>Ranweli National Park is home to diverse wildlife. Here's what you can expect to see and when to look for them:</p>
+
+                    <div class="wildlife-grid">
+                        <div class="wildlife-card">
+                            <span class="wildlife-emoji">🐘</span>
+                            <h4>Asian Elephants</h4>
+                            <p>Gentle giants roaming in herds. Best spotted near water sources.</p>
+                            <div class="best-time">All Day</div>
+                        </div>
+
+                        <div class="wildlife-card">
+                            <span class="wildlife-emoji">🐆</span>
+                            <h4>Sri Lankan Leopards</h4>
+                            <p>Elusive big cats often resting on tree branches during the day.</p>
+                            <div class="best-time">Late Afternoon</div>
+                        </div>
+
+                        <div class="wildlife-card">
+                            <span class="wildlife-emoji">🐻</span>
+                            <h4>Sloth Bears</h4>
+                            <p>Shaggy bears foraging for termites and fruits in the forest.</p>
+                            <div class="best-time">Early Morning</div>
+                        </div>
+
+                        <div class="wildlife-card">
+                            <span class="wildlife-emoji">🦌</span>
+                            <h4>Spotted Deer</h4>
+                            <p>Graceful and abundant, often seen grazing in open areas.</p>
+                            <div class="best-time">All Day</div>
+                        </div>
+
+                        <div class="wildlife-card">
+                            <span class="wildlife-emoji">🐗</span>
+                            <h4>Wild Boars</h4>
+                            <p>Robust omnivores often seen in family groups near mud wallows.</p>
+                            <div class="best-time">Evening</div>
+                        </div>
+
+                        <div class="wildlife-card">
+                            <span class="wildlife-emoji">🐊</span>
+                            <h4>Mugger Crocodiles</h4>
+                            <p>Large reptiles basking on riverbanks and in shallow waters.</p>
+                            <div class="best-time">Midday</div>
+                        </div>
+
+                        <div class="wildlife-card">
+                            <span class="wildlife-emoji">🦅</span>
+                            <h4>Fish Eagles</h4>
+                            <p>Majestic raptors soaring over water bodies hunting for fish.</p>
+                            <div class="best-time">Morning</div>
+                        </div>
+
+                        <div class="wildlife-card">
+                            <span class="wildlife-emoji">🦚</span>
+                            <h4>Peafowl</h4>
+                            <p>Colorful birds displaying their magnificent plumage.</p>
+                            <div class="best-time">Dawn & Dusk</div>
+                        </div>
+
+                        <div class="wildlife-card">
+                            <span class="wildlife-emoji">🐵</span>
+                            <h4>Langur Monkeys</h4>
+                            <p>Playful primates swinging through the forest canopy.</p>
+                            <div class="best-time">All Day</div>
+                        </div>
+
+                        <div class="wildlife-card">
+                            <span class="wildlife-emoji">🦎</span>
+                            <h4>Monitor Lizards</h4>
+                            <p>Large lizards often seen basking in sunny spots.</p>
+                            <div class="best-time">Midday</div>
+                        </div>
+
+                        <div class="wildlife-card">
+                            <span class="wildlife-emoji">🐍</span>
+                            <h4>Pythons</h4>
+                            <p>Non-venomous constrictors occasionally spotted near water.</p>
+                            <div class="best-time">Evening</div>
+                        </div>
+
+                        <div class="wildlife-card">
+                            <span class="wildlife-emoji">🦜</span>
+                            <h4>Endemic Birds</h4>
+                            <p>Over 30 endemic species including junglefowl and bulbuls.</p>
+                            <div class="best-time">Early Morning</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Photography Content -->
+            <div class="activity-content" id="photography">
+                <div class="section-header">
+                    <h2 class="section-title">Photography Guide</h2>
+                    <p class="section-subtitle">Capture stunning wildlife and landscape photographs</p>
+                </div>
+
+                <div class="photography-tips fade-in">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">📸 Photography Tips & Techniques</h3>
+
+                    <div class="tips-grid">
+                        <div class="tip-card">
+                            <h4>📷 Camera Settings</h4>
+                            <ul>
+                                <li>Use shutter priority mode (TV/S)</li>
+                                <li>Minimum 1/500s for moving animals</li>
+                                <li>ISO 400-1600 for sufficient speed</li>
+                                <li>Continuous autofocus (AI Servo/AF-C)</li>
+                                <li>Back button focus for better control</li>
+                            </ul>
+                        </div>
+
+                        <div class="tip-card">
+                            <h4>🔍 Lens Recommendations</h4>
+                            <ul>
+                                <li>70-200mm f/2.8 for versatility</li>
+                                <li>100-400mm for distant subjects</li>
+                                <li>24-70mm for landscapes</li>
+                                <li>1.4x teleconverter for extra reach</li>
+                                <li>Macro lens for small subjects</li>
+                            </ul>
+                        </div>
+
+                        <div class="tip-card">
+                            <h4>🌅 Best Lighting Times</h4>
+                            <ul>
+                                <li>Golden hour: 1 hour after sunrise</li>
+                                <li>Blue hour: 30 min before sunset</li>
+                                <li>Overcast days for even lighting</li>
+                                <li>Avoid harsh midday sun</li>
+                                <li>Use vehicle as blind for close shots</li>
+                            </ul>
+                        </div>
+
+                        <div class="tip-card">
+                            <h4>🎯 Composition Tips</h4>
+                            <ul>
+                                <li>Rule of thirds for animal placement</li>
+                                <li>Focus on the eyes always</li>
+                                <li>Include environmental context</li>
+                                <li>Capture animal behavior</li>
+                                <li>Use foreground elements for depth</li>
+                            </ul>
+                        </div>
+
+                        <div class="tip-card">
+                            <h4>🐘 Wildlife Behavior</h4>
+                            <ul>
+                                <li>Learn animal patterns and habits</li>
+                                <li>Be patient and observe first</li>
+                                <li>Respect animal space and stress signs</li>
+                                <li>Capture interactions and emotions</li>
+                                <li>Document the story, not just the animal</li>
+                            </ul>
+                        </div>
+
+                        <div class="tip-card">
+                            <h4>⚙️ Essential Gear</h4>
+                            <ul>
+                                <li>Extra batteries and memory cards</li>
+                                <li>Lens cleaning kit</li>
+                                <li>Bean bag for vehicle support</li>
+                                <li>Waterproof camera bag</li>
+                                <li>Notebook for location logging</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="package-showcase fade-in">
+                    <h3>📸 Photography Safari Packages</h3>
+                    <p>Specialized photography tours with expert guidance</p>
+
+                    <div class="package-grid">
+                        <div class="package-card">
+                            <h4>Photography Workshop</h4>
+                            <div class="package-price">$150</div>
+                            <ul class="package-features">
+                                <li>Professional photographer guide</li>
+                                <li>4-hour specialized safari</li>
+                                <li>Equipment guidance</li>
+                                <li>Post-processing tips</li>
+                                <li>Best spot recommendations</li>
+                            </ul>
+                        </div>
+
+                        <div class="package-card">
+                            <h4>Advanced Photography</h4>
+                            <div class="package-price">$280</div>
+                            <ul class="package-features">
+                                <li>Full day with expert</li>
+                                <li>Multiple locations</li>
+                                <li>Equipment rental available</li>
+                                <li>Individual instruction</li>
+                                <li>Portfolio review session</li>
+                            </ul>
+                        </div>
+
+                        <div class="package-card">
+                            <h4>Multi-day Intensive</h4>
+                            <div class="package-price">$750</div>
+                            <ul class="package-features">
+                                <li>3-day photography course</li>
+                                <li>Dawn and dusk sessions</li>
+                                <li>Professional equipment</li>
+                                <li>Editing workshop</li>
+                                <li>Certificate of completion</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Park Map Content -->
+            <div class="activity-content" id="map">
+                <div class="section-header">
+                    <h2 class="section-title">Ranweli National Park Map</h2>
+                    <p class="section-subtitle">Explore the different zones and attractions of our beautiful park</p>
+                </div>
+
+                <div class="park-map fade-in">
+                    <h3 style="color: var(--primary-color); margin-bottom: 2rem;">🗺️ Interactive Park Map</h3>
+
+                    <div class="interactive-map">
+                        <div class="map-zones">
+                            <div class="map-zone" style="background: #ffeaa7;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem;">🌲</div>
+                                    <div><strong>Zone 1</strong></div>
+                                    <div>Dense Forest</div>
+                                </div>
+                                <div class="zone-info">
+                                    <strong>Dense Forest Zone</strong><br>
+                                    Best for: Leopards, Birds, Monkeys<br>
+                                    Features: Thick canopy, ancient trees
+                                </div>
+                            </div>
+
+                            <div class="map-zone" style="background: #74b9ff;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem;">🏞️</div>
+                                    <div><strong>Zone 2</strong></div>
+                                    <div>Main Lake</div>
+                                </div>
+                                <div class="zone-info">
+                                    <strong>Main Lake Area</strong><br>
+                                    Best for: Elephants, Crocodiles, Water Birds<br>
+                                    Features: Large water body, viewing platforms
+                                </div>
+                            </div>
+
+                            <div class="map-zone" style="background: #fd79a8;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem;">🏔️</div>
+                                    <div><strong>Zone 3</strong></div>
+                                    <div>Rocky Outcrops</div>
+                                </div>
+                                <div class="zone-info">
+                                    <strong>Rocky Terrain</strong><br>
+                                    Best for: Leopards, Sloth Bears, Scenic Views<br>
+                                    Features: Granite boulders, caves
+                                </div>
+                            </div>
+
+                            <div class="map-zone" style="background: #a29bfe;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem;">🌾</div>
+                                    <div><strong>Zone 4</strong></div>
+                                    <div>Grasslands</div>
+                                </div>
+                                <div class="zone-info">
+                                    <strong>Open Grasslands</strong><br>
+                                    Best for: Spotted Deer, Wild Boar, Peacocks<br>
+                                    Features: Open savanna, grazing areas
+                                </div>
+                            </div>
+
+                            <div class="map-zone" style="background: #6c5ce7;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem;">🚪</div>
+                                    <div><strong>Entrance</strong></div>
+                                    <div>Park Gate</div>
+                                </div>
+                                <div class="zone-info">
+                                    <strong>Park Entrance</strong><br>
+                                    Features: Visitor center, ticket office, guides<br>
+                                    Facilities: Restrooms, information desk
+                                </div>
+                            </div>
+
+                            <div class="map-zone" style="background: #00b894;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem;">🌊</div>
+                                    <div><strong>Zone 5</strong></div>
+                                    <div>River Zone</div>
+                                </div>
+                                <div class="zone-info">
+                                    <strong>River Ecosystem</strong><br>
+                                    Best for: Crocodiles, Fish Eagles, Otters<br>
+                                    Features: Flowing river, riverbank wildlife
+                                </div>
+                            </div>
+
+                            <div class="map-zone" style="background: #fdcb6e;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem;">🌴</div>
+                                    <div><strong>Zone 6</strong></div>
+                                    <div>Palm Grove</div>
+                                </div>
+                                <div class="zone-info">
+                                    <strong>Palm Grove</strong><br>
+                                    Best for: Birds, Butterflies, Small mammals<br>
+                                    Features: Coconut palms, shaded areas
+                                </div>
+                            </div>
+
+                            <div class="map-zone" style="background: #e17055;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem;">🏕️</div>
+                                    <div><strong>Zone 7</strong></div>
+                                    <div>Rest Area</div>
+                                </div>
+                                <div class="zone-info">
+                                    <strong>Visitor Rest Area</strong><br>
+                                    Features: Picnic area, viewpoint, restrooms<br>
+                                    Activities: Lunch break, observation
+                                </div>
+                            </div>
+
+                            <div class="map-zone" style="background: #81ecec;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem;">🦅</div>
+                                    <div><strong>Zone 8</strong></div>
+                                    <div>Bird Sanctuary</div>
+                                </div>
+                                <div class="zone-info">
+                                    <strong>Bird Sanctuary</strong><br>
+                                    Best for: Endemic birds, Migratory species<br>
+                                    Features: Nesting areas, observation hides
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="map-legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ffeaa7;"></div>
+                            <span>Dense Forest - Prime leopard territory</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #74b9ff;"></div>
+                            <span>Water Bodies - Elephant gathering spots</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #fd79a8;"></div>
+                            <span>Rocky Areas - Scenic viewpoints</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #a29bfe;"></div>
+                            <span>Grasslands - Open wildlife viewing</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #00b894;"></div>
+                            <span>River Zone - Aquatic wildlife</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #81ecec;"></div>
+                            <span>Bird Areas - Ornithology hotspots</span>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 2rem;">
+                        <h3>🚗 Safari Route Information</h3>
+                        <p><strong>Standard Route:</strong> Entrance → Grasslands → Main Lake → Dense Forest → Rocky Outcrops → Return<br>
+                        <strong>Full Day Route:</strong> Covers all 8 zones with lunch break at Rest Area<br>
+                        <strong>Photography Route:</strong> Focuses on zones 1, 3, and 8 for best photo opportunities<br>
+                        <strong>Birding Route:</strong> Concentrates on zones 6 and 8 with early morning timing</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: var(--primary-color); color: white; padding: 3rem 0 1rem;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                <div>
+                    <h3 style="margin-bottom: 1rem;">Ranweli Safari</h3>
+                    <p>Experience the wild beauty of Sri Lanka's premier national park with expert guides and premium service.</p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Quick Links</h4>
+                    <ul style="list-style: none;">
+                        <li><a href="/" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Home</a></li>
+                        <li><a href="gallery.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Gallery</a></li>
+                        <li><a href="visitor-guide.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Visitor Guide</a></li>
+                        <li><a href="contact.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Contact Info</h4>
+                    <p>📧 info@ranwelisafari.com</p>
+                    <p>📞 +94 77 123 4567</p>
+                    <p>📍 Ranweli National Park, Sri Lanka</p>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                <p>&copy; 2025 Ranweli Safari Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Tab functionality for activities
+        document.addEventListener('DOMContentLoaded', function() {
+            const activityTabs = document.querySelectorAll('.activity-tab');
+            const activityContents = document.querySelectorAll('.activity-content');
+
+            activityTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetTab = tab.dataset.tab;
+
+                    // Remove active class from all tabs and contents
+                    activityTabs.forEach(t => t.classList.remove('active'));
+                    activityContents.forEach(c => c.classList.remove('active'));
+
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

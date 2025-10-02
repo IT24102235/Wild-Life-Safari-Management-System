@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance Officer Dashboard - Ranweli Safari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+            background: linear-gradient(135deg, #fd7e14 0%, #dc3545 100%);
+            color: white;
+        }
+
+        .maintenance-badge {
+            background: #fd7e14;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+
+        .performance-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .performance-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: #f8f9fa;
+            border-left-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .vehicle-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 5px solid #fd7e14;
+        }
+
+        .vehicle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .vehicle-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-operational { background: #d4edda; color: #155724; }
+        .status-maintenance { background: #fff3cd; color: #856404; }
+        .status-repair { background: #f8d7da; color: #721c24; }
+        .status-outofservice { background: #f8d7da; color: #721c24; }
+
+        .vehicle-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-icon {
+            color: #fd7e14;
+        }
+
+        .maintenance-form {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 5px solid #fd7e14;
+        }
+
+        .priority-critical { border-left-color: #dc3545; }
+        .priority-high { border-left-color: #fd7e14; }
+        .priority-medium { border-left-color: #ffc107; }
+        .priority-low { border-left-color: #28a745; }
+
+        .task-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .inventory-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .inventory-level {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .level-critical { color: #dc3545; }
+        .level-low { color: #fd7e14; }
+        .level-normal { color: #28a745; }
+        .level-high { color: var(--primary-color); }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-critical { background: #dc3545; }
+        .progress-low { background: #fd7e14; }
+        .progress-normal { background: #28a745; }
+        .progress-high { background: var(--primary-color); }
+
+        .maintenance-calendar {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 0.9rem;
+        }
+
+        .calendar-day.has-maintenance {
+            background: #fff3cd;
+            border-color: #fd7e14;
+            font-weight: 600;
+        }
+
+        .calendar-day:hover {
+            background: #fd7e14;
+            color: white;
+        }
+
+        .maintenance-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 6px;
+            height: 6px;
+            background: #fd7e14;
+            border-radius: 50%;
+        }
+
+        .work-order {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-left: 4px solid #fd7e14;
+        }
+
+        .work-order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .work-order-id {
+            font-weight: 700;
+            color: #fd7e14;
+        }
+
+        .technician-assignment {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3 id="officerName">Robert Wilson</h3>
+                <div class="maintenance-badge">MAINTENANCE OFFICER</div>
+                <div class="performance-card">
+                    <div class="performance-number" id="activeVehicles">12</div>
+                    <div class="performance-label">Active Vehicles</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                    <div style="text-align: center;">
+                        <div class="performance-number" id="pendingTasks">5</div>
+                        <div class="performance-label">Pending Tasks</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div class="performance-number" id="uptime">96%</div>
+                        <div class="performance-label">Fleet Uptime</div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-section="overview">
+                    <span class="menu-icon">📊</span>
+                    Overview
+                </a>
+                <a href="#" class="menu-item" data-section="vehicles">
+                    <span class="menu-icon">🚗</span>
+                    Vehicle Fleet
+                </a>
+                <a href="#" class="menu-item" data-section="tasks">
+                    <span class="menu-icon">🔧</span>
+                    Maintenance Tasks
+                </a>
+                <a href="#" class="menu-item" data-section="schedule">
+                    <span class="menu-icon">📅</span>
+                    Maintenance Schedule
+                </a>
+                <a href="#" class="menu-item" data-section="inventory">
+                    <span class="menu-icon">📦</span>
+                    Parts Inventory
+                </a>
+                <a href="#" class="menu-item" data-section="workorders">
+                    <span class="menu-icon">📋</span>
+                    Work Orders
+                </a>
+                <a href="#" class="menu-item" data-section="reports">
+                    <span class="menu-icon">📈</span>
+                    Reports
+                </a>
+            </nav>
+
+            <div style="padding: 2rem;">
+                <button class="logout-btn" style="background: #dc3545; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; width: 100%;" onclick="logout()">
+                    🚪 Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview Section -->
+            <section class="content-section active" id="overview">
+                <div class="section-header">
+                    <h1>Maintenance Officer Dashboard</h1>
+                    <p>Monitor and maintain the safari vehicle fleet</p>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">🚗</div>
+                        <div class="stat-number" id="totalVehicles">15</div>
+                        <div class="stat-label">Total Vehicles</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-number" id="operationalVehicles">12</div>
+                        <div class="stat-label">Operational</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">🔧</div>
+                        <div class="stat-number" id="inMaintenance">2</div>
+                        <div class="stat-label">In Maintenance</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-number" id="criticalIssues">1</div>
+                        <div class="stat-label">Critical Issues</div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2>Priority Maintenance Tasks</h2>
+                    <button class="btn btn-primary" onclick="showSection('tasks')">View All Tasks</button>
+                </div>
+
+                <div id="priorityTasks">
+                    <!-- Priority tasks will be loaded here -->
+                </div>
+
+                <div class="section-header">
+                    <h2>Vehicle Status Overview</h2>
+                </div>
+
+                <div id="vehicleStatusOverview">
+                    <!-- Vehicle status overview will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Vehicle Fleet Section -->
+            <section class="content-section" id="vehicles">
+                <div class="section-header">
+                    <h2>Vehicle Fleet Management</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="exportVehicleReport()">Export Report</button>
+                        <button class="btn btn-primary" onclick="addNewVehicle()">Add Vehicle</button>
+                    </div>
+                </div>
+
+                <div class="filter-buttons" style="margin-bottom: 2rem;">
+                    <button class="filter-btn active" data-filter="all">All Vehicles</button>
+                    <button class="filter-btn" data-filter="operational">Operational</button>
+                    <button class="filter-btn" data-filter="maintenance">In Maintenance</button>
+                    <button class="filter-btn" data-filter="repair">Under Repair</button>
+                    <button class="filter-btn" data-filter="outofservice">Out of Service</button>
+                </div>
+
+                <div id="vehicleFleet">
+                    <!-- Vehicle fleet will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Maintenance Tasks Section -->
+            <section class="content-section" id="tasks">
+                <div class="section-header">
+                    <h2>Maintenance Tasks</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="assignTechnician()">Assign Technician</button>
+                        <button class="btn btn-primary" onclick="createNewTask()">New Task</button>
+                    </div>
+                </div>
+
+                <div class="filter-buttons" style="margin-bottom: 2rem;">
+                    <button class="filter-btn active" data-filter="all">All Tasks</button>
+                    <button class="filter-btn" data-filter="critical">Critical</button>
+                    <button class="filter-btn" data-filter="pending">Pending</button>
+                    <button class="filter-btn" data-filter="inprogress">In Progress</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                </div>
+
+                <div id="maintenanceTasks">
+                    <!-- Maintenance tasks will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Maintenance Schedule Section -->
+            <section class="content-section" id="schedule">
+                <div class="section-header">
+                    <h2>Maintenance Schedule</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="previousMonth()">← Previous</button>
+                        <span style="margin: 0 1rem; font-weight: 600;">January 2025</span>
+                        <button class="btn btn-outline" onclick="nextMonth()">Next →</button>
+                    </div>
+                </div>
+
+                <div class="maintenance-calendar">
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1rem; margin-bottom: 1rem; text-align: center; font-weight: 600;">
+                        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1rem;" id="maintenanceCalendar">
+                        <!-- Calendar days will be generated here -->
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Upcoming Maintenance</h4>
+                        <div id="upcomingMaintenance">
+                            <!-- Upcoming maintenance will be shown here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Parts Inventory Section -->
+            <section class="content-section" id="inventory">
+                <div class="section-header">
+                    <h2>Parts Inventory Management</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="requestParts()">Request Parts</button>
+                        <button class="btn btn-primary" onclick="addInventoryItem()">Add Item</button>
+                    </div>
+                </div>
+
+                <div class="inventory-grid">
+                    <div class="inventory-card">
+                        <div class="inventory-level level-low">8</div>
+                        <div>Engine Oil (5L)</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-low" style="width: 30%;"></div>
+                        </div>
+                        <small>Low Stock - Reorder needed</small>
+                    </div>
+
+                    <div class="inventory-card">
+                        <div class="inventory-level level-critical">2</div>
+                        <div>Brake Pads Set</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-critical" style="width: 15%;"></div>
+                        </div>
+                        <small>Critical - Order immediately</small>
+                    </div>
+
+                    <div class="inventory-card">
+                        <div class="inventory-level level-normal">24</div>
+                        <div>Air Filters</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-normal" style="width: 80%;"></div>
+                        </div>
+                        <small>Stock OK</small>
+                    </div>
+
+                    <div class="inventory-card">
+                        <div class="inventory-level level-high">45</div>
+                        <div>Spark Plugs</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-high" style="width: 95%;"></div>
+                        </div>
+                        <small>Well Stocked</small>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h3>Recent Inventory Movements</h3>
+                </div>
+
+                <div id="inventoryMovements">
+                    <!-- Inventory movements will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Work Orders Section -->
+            <section class="content-section" id="workorders">
+                <div class="section-header">
+                    <h2>Work Orders</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="printWorkOrder()">Print Orders</button>
+                        <button class="btn btn-primary" onclick="createWorkOrder()">Create Work Order</button>
+                    </div>
+                </div>
+
+                <div id="workOrdersList">
+                    <!-- Work orders will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section class="content-section" id="reports">
+                <div class="section-header">
+                    <h2>Maintenance Reports</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="generateReport()">Generate Report</button>
+                        <button class="btn btn-primary" onclick="exportAllData()">Export Data</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-number">$12,450</div>
+                        <div class="stat-label">Monthly Maintenance Cost</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-number">124</div>
+                        <div class="stat-label">Hours This Month</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">🔧</div>
+                        <div class="stat-number">89</div>
+                        <div class="stat-label">Tasks Completed</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-number">96%</div>
+                        <div class="stat-label">Fleet Efficiency</div>
+                    </div>
+                </div>
+
+                <div class="chart-container" style="background: white; border-radius: 15px; padding: 2rem; box-shadow: var(--shadow); margin: 2rem 0;">
+                    <h3>Maintenance Cost Trends</h3>
+                    <div style="height: 300px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-light); margin-top: 1rem;">
+                        📊 Maintenance cost trends chart placeholder
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            if (!SafariApp.Auth.isAuthenticated() || SafariApp.Auth.getUserRole() !== 'MAINTENANCE_OFFICER') {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Initialize dashboard
+            loadPriorityTasks();
+            loadVehicleFleet();
+            loadMaintenanceTasks();
+            generateMaintenanceCalendar();
+            loadWorkOrders();
+
+            // Menu navigation
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    showSection(section);
+
+                    document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+
+        function loadPriorityTasks() {
+            // Mock priority tasks
+            const priorityTasks = [
+                {
+                    id: 'TASK-001',
+                    vehicle: 'Toyota Land Cruiser - LB-1234',
+                    priority: 'critical',
+                    task: 'Engine oil leak - requires immediate attention',
+                    assignedTo: 'Mike Johnson',
+                    dueDate: '2025-01-15'
+                },
+                {
+                    id: 'TASK-002',
+                    vehicle: 'Jeep Wrangler - LB-5678',
+                    priority: 'high',
+                    task: 'Brake pad replacement due',
+                    assignedTo: 'Tom Wilson',
+                    dueDate: '2025-01-16'
+                }
+            ];
+
+            document.getElementById('priorityTasks').innerHTML = priorityTasks.map(task => `
+                <div class="task-card priority-${task.priority}">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <div>
+                            <h4 style="color: #fd7e14; margin-bottom: 0.5rem;">${task.vehicle}</h4>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">Task: ${task.id}</p>
+                        </div>
+                        <div class="vehicle-status status-${task.priority === 'critical' ? 'repair' : 'maintenance'}">${task.priority.toUpperCase()}</div>
+                    </div>
+
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                        <p><strong>Issue:</strong> ${task.task}</p>
+                        <p><strong>Assigned to:</strong> ${task.assignedTo}</p>
+                        <p><strong>Due Date:</strong> ${SafariApp.formatDate(task.dueDate)}</p>
+                    </div>
+
+                    <div class="task-actions">
+                        <button class="btn btn-primary btn-sm" onclick="startTask('${task.id}')">Start Task</button>
+                        <button class="btn btn-outline btn-sm" onclick="assignTechnician('${task.id}')">Reassign</button>
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="viewTaskDetails('${task.id}')">Details</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadVehicleFleet() {
+            // Mock vehicle data
+            const vehicles = [
+                {
+                    id: 'VEH-001',
+                    model: 'Toyota Land Cruiser Prado',
+                    registration: 'LB-1234',
+                    status: 'operational',
+                    mileage: 45678,
+                    lastService: '2024-12-15',
+                    nextService: '2025-02-15',
+                    fuelLevel: 85,
+                    assignedDriver: 'Nimal Silva'
+                },
+                {
+                    id: 'VEH-002',
+                    model: 'Jeep Wrangler',
+                    registration: 'LB-5678',
+                    status: 'maintenance',
+                    mileage: 32456,
+                    lastService: '2024-11-20',
+                    nextService: '2025-01-20',
+                    fuelLevel: 60,
+                    assignedDriver: 'Kamal Dias'
+                },
+                {
+                    id: 'VEH-003',
+                    model: 'Land Rover Defender',
+                    registration: 'LB-9012',
+                    status: 'repair',
+                    mileage: 67890,
+                    lastService: '2024-10-10',
+                    nextService: 'Overdue',
+                    fuelLevel: 30,
+                    assignedDriver: 'Sunil Bandara'
+                }
+            ];
+
+            document.getElementById('vehicleFleet').innerHTML = vehicles.map(vehicle => `
+                <div class="vehicle-card">
+                    <div class="vehicle-header">
+                        <div>
+                            <h4 style="color: #fd7e14; margin-bottom: 0.5rem;">${vehicle.model}</h4>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">Registration: ${vehicle.registration}</p>
+                        </div>
+                        <div class="vehicle-status status-${vehicle.status}">${vehicle.status.toUpperCase()}</div>
+                    </div>
+
+                    <div class="vehicle-details">
+                        <div class="detail-item">
+                            <span class="detail-icon">📊</span>
+                            <span>Mileage: ${vehicle.mileage.toLocaleString()} km</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">🔧</span>
+                            <span>Last Service: ${vehicle.lastService}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">📅</span>
+                            <span>Next Service: ${vehicle.nextService}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">⛽</span>
+                            <span>Fuel: ${vehicle.fuelLevel}%</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">👤</span>
+                            <span>Driver: ${vehicle.assignedDriver}</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button class="btn btn-primary btn-sm" onclick="editVehicle('${vehicle.id}')">Edit</button>
+                        <button class="btn btn-outline btn-sm" onclick="scheduleService('${vehicle.id}')">Schedule Service</button>
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="viewHistory('${vehicle.id}')">History</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Also load vehicle status overview
+            document.getElementById('vehicleStatusOverview').innerHTML = vehicles.slice(0, 2).map(vehicle => `
+                <div class="vehicle-card">
+                    <div class="vehicle-header">
+                        <h5>${vehicle.model} - ${vehicle.registration}</h5>
+                        <div class="vehicle-status status-${vehicle.status}">${vehicle.status.toUpperCase()}</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Fuel Level:</span>
+                            <span>${vehicle.fuelLevel}%</span>
+                        </div>
+                        <div style="background: #e0e0e0; height: 8px; border-radius: 4px;">
+                            <div style="background: ${vehicle.fuelLevel > 50 ? '#28a745' : '#fd7e14'}; height: 100%; width: ${vehicle.fuelLevel}%; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadMaintenanceTasks() {
+            // Mock maintenance tasks
+            const tasks = [
+                {
+                    id: 'TASK-001',
+                    vehicle: 'LB-1234',
+                    priority: 'critical',
+                    description: 'Engine oil leak repair',
+                    status: 'pending',
+                    assignedTo: 'Mike Johnson',
+                    estimatedHours: 4,
+                    dueDate: '2025-01-15'
+                },
+                {
+                    id: 'TASK-002',
+                    vehicle: 'LB-5678',
+                    priority: 'high',
+                    description: 'Brake pad replacement',
+                    status: 'inprogress',
+                    assignedTo: 'Tom Wilson',
+                    estimatedHours: 2,
+                    dueDate: '2025-01-16'
+                },
+                {
+                    id: 'TASK-003',
+                    vehicle: 'LB-9012',
+                    priority: 'medium',
+                    description: 'Tire rotation and alignment',
+                    status: 'completed',
+                    assignedTo: 'John Davis',
+                    estimatedHours: 1.5,
+                    dueDate: '2025-01-14'
+                }
+            ];
+
+            document.getElementById('maintenanceTasks').innerHTML = tasks.map(task => `
+                <div class="task-card priority-${task.priority}">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <div>
+                            <h4 style="color: #fd7e14; margin-bottom: 0.5rem;">${task.description}</h4>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">Task: ${task.id} • Vehicle: ${task.vehicle}</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <div class="vehicle-status status-${task.priority === 'critical' ? 'repair' : task.priority === 'high' ? 'maintenance' : 'operational'}">${task.priority.toUpperCase()}</div>
+                            <div class="vehicle-status status-${task.status}">${task.status.toUpperCase()}</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                        <p><strong>Assigned to:</strong> ${task.assignedTo}</p>
+                        <p><strong>Estimated Hours:</strong> ${task.estimatedHours}</p>
+                        <p><strong>Due Date:</strong> ${SafariApp.formatDate(task.dueDate)}</p>
+                    </div>
+
+                    <div class="task-actions">
+                        ${task.status === 'pending' ? `
+                            <button class="btn btn-primary btn-sm" onclick="startTask('${task.id}')">Start Task</button>
+                            <button class="btn btn-outline btn-sm" onclick="assignTechnician('${task.id}')">Assign</button>
+                        ` : task.status === 'inprogress' ? `
+                            <button class="btn btn-primary btn-sm" onclick="completeTask('${task.id}')">Complete</button>
+                            <button class="btn btn-outline btn-sm" onclick="addProgress('${task.id}')">Add Progress</button>
+                        ` : `
+                            <button class="btn btn-outline btn-sm" onclick="viewTaskReport('${task.id}')">View Report</button>
+                        `}
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="viewTaskDetails('${task.id}')">Details</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function generateMaintenanceCalendar() {
+            const calendar = document.getElementById('maintenanceCalendar');
+            const days = [];
+
+            for (let i = 1; i <= 31; i++) {
+                const hasMaintenance = Math.random() > 0.8;
+                days.push(`
+                    <div class="calendar-day ${hasMaintenance ? 'has-maintenance' : ''}" onclick="showDayMaintenance(${i})">
+                        ${i}
+                        ${hasMaintenance ? '<div class="maintenance-indicator"></div>' : ''}
+                    </div>
+                `);
+            }
+
+            calendar.innerHTML = days.join('');
+
+            // Load upcoming maintenance
+            document.getElementById('upcomingMaintenance').innerHTML = `
+                <div style="padding: 1rem; background: #fff3cd; border-radius: 8px; margin-bottom: 1rem;">
+                    <p><strong>Jan 15</strong> - Engine service (LB-1234)</p>
+                    <p><strong>Jan 18</strong> - Brake inspection (LB-5678)</p>
+                    <p><strong>Jan 22</strong> - Tire replacement (LB-9012)</p>
+                </div>
+            `;
+        }
+
+        function loadWorkOrders() {
+            // Mock work orders
+            const workOrders = [
+                {
+                    id: 'WO-001',
+                    vehicle: 'LB-1234',
+                    priority: 'high',
+                    description: 'Comprehensive engine service',
+                    technician: 'Mike Johnson',
+                    status: 'active',
+                    startDate: '2025-01-15',
+                    estimatedCompletion: '2025-01-16'
+                },
+                {
+                    id: 'WO-002',
+                    vehicle: 'LB-5678',
+                    priority: 'medium',
+                    description: 'Routine maintenance check',
+                    technician: 'Tom Wilson',
+                    status: 'pending',
+                    startDate: '2025-01-17',
+                    estimatedCompletion: '2025-01-17'
+                }
+            ];
+
+            document.getElementById('workOrdersList').innerHTML = workOrders.map(order => `
+                <div class="work-order">
+                    <div class="work-order-header">
+                        <div class="work-order-id">${order.id}</div>
+                        <div class="vehicle-status status-${order.status}">${order.status.toUpperCase()}</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <p><strong>Vehicle:</strong> ${order.vehicle}</p>
+                            <p><strong>Description:</strong> ${order.description}</p>
+                            <p><strong>Priority:</strong> ${order.priority.toUpperCase()}</p>
+                        </div>
+                        <div>
+                            <p><strong>Technician:</strong> ${order.technician}</p>
+                            <p><strong>Start Date:</strong> ${SafariApp.formatDate(order.startDate)}</p>
+                            <p><strong>Est. Completion:</strong> ${SafariApp.formatDate(order.estimatedCompletion)}</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button class="btn btn-primary btn-sm" onclick="editWorkOrder('${order.id}')">Edit</button>
+                        <button class="btn btn-outline btn-sm" onclick="printWorkOrder('${order.id}')">Print</button>
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="closeWorkOrder('${order.id}')">Close</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function logout() {
+            SafariApp.Auth.logout();
+        }
+
+        // Mock functions
+        function startTask(id) {
+            SafariApp.Notifications.success(`Task ${id} started!`);
+        }
+
+        function completeTask(id) {
+            SafariApp.Notifications.success(`Task ${id} completed!`);
+        }
+
+        function assignTechnician(id) {
+            SafariApp.Notifications.info(`Assigning technician to ${id} - Feature coming soon!`);
+        }
+
+        function viewTaskDetails(id) {
+            SafariApp.Notifications.info(`Viewing task details ${id} - Feature coming soon!`);
+        }
+
+        function scheduleService(id) {
+            SafariApp.Notifications.info(`Scheduling service for vehicle ${id} - Feature coming soon!`);
+        }
+
+        function editVehicle(id) {
+            SafariApp.Notifications.info(`Editing vehicle ${id} - Feature coming soon!`);
+        }
+
+        function addNewVehicle() {
+            SafariApp.Notifications.info('Adding new vehicle - Feature coming soon!');
+        }
+
+        function createNewTask() {
+            SafariApp.Notifications.info('Creating new maintenance task - Feature coming soon!');
+        }
+
+        function requestParts() {
+            SafariApp.Notifications.info('Requesting parts - Feature coming soon!');
+        }
+
+        function createWorkOrder() {
+            SafariApp.Notifications.info('Creating work order - Feature coming soon!');
+        }
+
+        function showDayMaintenance(day) {
+            SafariApp.Notifications.info(`Showing maintenance for day ${day} - Feature coming soon!`);
+        }
+
+        function generateReport() {
+            SafariApp.Notifications.info('Generating maintenance report - Feature coming soon!');
+        }
+
+        function exportAllData() {
+            SafariApp.Notifications.success('Exporting maintenance data...');
+        }
+    </script>
+</body>
+</html>
+

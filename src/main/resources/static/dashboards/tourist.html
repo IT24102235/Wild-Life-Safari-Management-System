@@ -3,316 +3,951 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safari Management System - Tourist Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        safari: {
-                            green: '#2d5016',
-                            brown: '#8b4513',
-                            gold: '#ffd700'
-                        }
-                    }
-                }
+    <title>Tourist Dashboard - Ranweli Safari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+        }
+
+        .user-info h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: #f8f9fa;
+            border-left-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .menu-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .welcome-text h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-text p {
+            color: var(--text-light);
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .booking-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .booking-id {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .booking-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-icon {
+            color: var(--primary-color);
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .profile-form {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-details {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-actions {
+                flex-direction: column;
             }
         }
-    </script>
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Navigation -->
-    <nav class="bg-safari-green text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <h1 class="text-xl font-bold">Safari Management System</h1>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-sm">Welcome, <span id="username"></span></span>
-                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm">Logout</button>
+<body>
+    <div class="dashboard">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" onclick="toggleSidebar()">☰</button>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="user-avatar" id="userAvatar">👤</div>
+                <div class="user-info">
+                    <h3 id="userName">John Doe</h3>
+                    <p id="userEmail">john@example.com</p>
+                    <div class="status-badge status-confirmed" style="font-size: 0.8rem; margin-top: 0.5rem;">Tourist</div>
                 </div>
             </div>
-        </div>
-    </nav>
 
-    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <!-- Dashboard Header -->
-        <div class="mb-8">
-            <h2 class="text-3xl font-bold text-gray-900">Tourist Dashboard</h2>
-            <p class="mt-2 text-gray-600">Explore and book your safari adventures</p>
-        </div>
-
-        <!-- Tab Navigation -->
-        <div class="mb-6">
-            <nav class="flex space-x-8">
-                <button onclick="showTab('packages')" id="packagesTab" class="tab-button active">Available Packages</button>
-                <button onclick="showTab('bookings')" id="bookingsTab" class="tab-button">My Bookings</button>
-                <button onclick="showTab('profile')" id="profileTab" class="tab-button">Profile</button>
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-section="overview">
+                    <span class="menu-icon">📊</span>
+                    Overview
+                </a>
+                <a href="#" class="menu-item" data-section="bookings">
+                    <span class="menu-icon">📅</span>
+                    My Bookings
+                </a>
+                <a href="#" class="menu-item" data-section="new-booking">
+                    <span class="menu-icon">➕</span>
+                    New Booking
+                </a>
+                <a href="#" class="menu-item" data-section="feedback">
+                    <span class="menu-icon">⭐</span>
+                    My Feedback
+                </a>
+                <a href="#" class="menu-item" data-section="profile">
+                    <span class="menu-icon">👤</span>
+                    Profile
+                </a>
+                <a href="#" class="menu-item" data-section="preferences">
+                    <span class="menu-icon">⚙️</span>
+                    Preferences
+                </a>
             </nav>
-        </div>
 
-        <!-- Available Packages Tab -->
-        <div id="packagesContent" class="tab-content">
-            <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="text-xl font-semibold mb-4">Available Safari Packages</h3>
-                <div id="packagesList" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <!-- Packages will be loaded here -->
-                </div>
+            <div style="padding: 2rem;">
+                <button class="logout-btn" onclick="logout()">
+                    🚪 Logout
+                </button>
             </div>
-        </div>
+        </aside>
 
-        <!-- My Bookings Tab -->
-        <div id="bookingsContent" class="tab-content hidden">
-            <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="text-xl font-semibold mb-4">My Bookings</h3>
-                <div id="bookingsList">
-                    <!-- Bookings will be loaded here -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Profile Tab -->
-        <div id="profileContent" class="tab-content hidden">
-            <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="text-xl font-semibold mb-4">My Profile</h3>
-                <div id="profileForm">
-                    <!-- Profile form will be loaded here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Booking Modal -->
-    <div id="bookingModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 class="text-lg font-semibold mb-4">Book Safari Package</h3>
-            <form id="bookingForm">
-                <input type="hidden" id="selectedPackageId">
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">Package</label>
-                    <p id="selectedPackageName" class="text-gray-900"></p>
-                </div>
-                <div class="mb-4">
-                    <label for="requestedDate" class="block text-sm font-medium text-gray-700">Date</label>
-                    <input type="date" id="requestedDate" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
-                </div>
-                <div class="mb-4">
-                    <label for="requestedTime" class="block text-sm font-medium text-gray-700">Time</label>
-                    <input type="time" id="requestedTime" required class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
-                </div>
-                <div class="mb-4">
-                    <label for="notes" class="block text-sm font-medium text-gray-700">Notes (Optional)</label>
-                    <textarea id="notes" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"></textarea>
-                </div>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="closeBookingModal()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-safari-green text-white rounded-md hover:bg-green-700">Create Booking</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        const API_BASE = '/api/v1';
-        let currentTab = 'packages';
-
-        // Check authentication
-        const token = localStorage.getItem('accessToken');
-        const username = localStorage.getItem('username');
-
-        if (!token || !username) {
-            window.location.href = '../index.html';
-        }
-
-        document.getElementById('username').textContent = username;
-
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('requestedDate').min = today;
-
-        function showTab(tabName) {
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-
-            // Remove active class from all tabs
-            document.querySelectorAll('.tab-button').forEach(tab => {
-                tab.classList.remove('active');
-            });
-
-            // Show selected tab content
-            document.getElementById(tabName + 'Content').classList.remove('hidden');
-            document.getElementById(tabName + 'Tab').classList.add('active');
-
-            currentTab = tabName;
-
-            // Load content based on tab
-            if (tabName === 'packages') {
-                loadPackages();
-            } else if (tabName === 'bookings') {
-                loadBookings();
-            } else if (tabName === 'profile') {
-                loadProfile();
-            }
-        }
-
-        async function loadPackages() {
-            try {
-                const response = await fetch(`${API_BASE}/packages`);
-                const packages = await response.json();
-
-                const packagesList = document.getElementById('packagesList');
-                packagesList.innerHTML = packages.map(pkg => `
-                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <h4 class="text-lg font-semibold text-safari-green">${pkg.name}</h4>
-                        <p class="text-gray-600 mt-1">${pkg.description || 'No description available'}</p>
-                        <div class="mt-3 space-y-1 text-sm text-gray-500">
-                            <p>Duration: ${pkg.days} day(s)</p>
-                            <p>Max People: ${pkg.maxPeople}</p>
-                            <p class="text-lg font-bold text-safari-brown">$${pkg.price}</p>
-                        </div>
-                        <button onclick="openBookingModal(${pkg.id}, '${pkg.name}')"
-                                class="mt-4 w-full bg-safari-green text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
-                            Book Now
-                        </button>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview Section -->
+            <section class="content-section active" id="overview">
+                <div class="dashboard-header">
+                    <div class="welcome-text">
+                        <h1>Welcome back, <span id="welcomeName">John</span>!</h1>
+                        <p>Ready for your next safari adventure? Here's your booking summary.</p>
                     </div>
-                `).join('');
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-number" id="totalBookings">3</div>
+                        <div class="stat-label">Total Bookings</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-number" id="completedSafaris">2</div>
+                        <div class="stat-label">Completed Safaris</div>
+                    </div>
+
+                    <div class="stat-icon">🦁</div>
+                    <div class="stat-number" id="wildlifeSeen">23</div>
+                    <div class="stat-label">Wildlife Species Seen</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-number" id="avgRating">4.8</div>
+                        <div class="stat-label">Average Rating Given</div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2 class="section-title">Recent Bookings</h2>
+                    <button class="btn btn-primary" onclick="showSection('new-booking')">
+                        New Booking
+                    </button>
+                </div>
+
+                <div id="recentBookings">
+                    <!-- Recent bookings will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Bookings Section -->
+            <section class="content-section" id="bookings">
+                <div class="section-header">
+                    <h2 class="section-title">My Bookings</h2>
+                    <button class="btn btn-primary" onclick="showSection('new-booking')">
+                        New Booking
+                    </button>
+                </div>
+
+                <div class="filter-buttons" style="margin-bottom: 2rem;">
+                    <button class="filter-btn active" data-filter="all">All Bookings</button>
+                    <button class="filter-btn" data-filter="confirmed">Confirmed</button>
+                    <button class="filter-btn" data-filter="pending">Pending</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                    <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+                </div>
+
+                <div id="allBookings">
+                    <!-- All bookings will be loaded here -->
+                </div>
+            </section>
+
+            <!-- New Booking Section -->
+            <section class="content-section" id="new-booking">
+                <div class="section-header">
+                    <h2 class="section-title">Book New Safari</h2>
+                </div>
+
+                <div class="booking-form" style="background: white; border-radius: 15px; padding: 2rem; box-shadow: var(--shadow);">
+                    <form id="newBookingForm">
+                        <div class="form-section">
+                            <h3>Select Safari Package</h3>
+                            <div class="package-selection" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                                <div class="package-option" data-package="morning" data-price="75">
+                                    <div style="font-size: 2rem;">🌅</div>
+                                    <h4>Morning Safari</h4>
+                                    <div class="package-price">$75 per person</div>
+                                    <p>3 hours • 6:00 AM - 9:00 AM</p>
+                                    <ul style="text-align: left; font-size: 0.9rem;">
+                                        <li>High wildlife activity</li>
+                                        <li>Cool temperature</li>
+                                        <li>Bird watching</li>
+                                    </ul>
+                                </div>
+
+                                <div class="package-option" data-package="evening" data-price="85">
+                                    <div style="font-size: 2rem;">🌇</div>
+                                    <h4>Evening Safari</h4>
+                                    <div class="package-price">$85 per person</div>
+                                    <p>3 hours • 3:30 PM - 6:30 PM</p>
+                                    <ul style="text-align: left; font-size: 0.9rem;">
+                                        <li>Predator activity</li>
+                                        <li>Sunset views</li>
+                                        <li>Photography</li>
+                                    </ul>
+                                </div>
+
+                                <div class="package-option" data-package="fullday" data-price="150">
+                                    <div style="font-size: 2rem;">☀️</div>
+                                    <h4>Full Day Safari</h4>
+                                    <div class="package-price">$150 per person</div>
+                                    <p>12 hours • 6:00 AM - 6:00 PM</p>
+                                    <ul style="text-align: left; font-size: 0.9rem;">
+                                        <li>Complete experience</li>
+                                        <li>Lunch included</li>
+                                        <li>All park zones</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Booking Details</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Safari Date</label>
+                                    <input type="date" class="form-control" id="newSafariDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Number of Participants</label>
+                                    <input type="number" class="form-control" id="newParticipants" min="1" max="8" value="2" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Special Requirements</label>
+                                <textarea class="form-control" id="newSpecialRequests" placeholder="Any special requirements, dietary restrictions, or accessibility needs..."></textarea>
+                            </div>
+
+                            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin: 1rem 0;">
+                                <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Booking Summary</h4>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Package:</span>
+                                    <span id="selectedPackageName">Select a package</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Participants:</span>
+                                    <span id="summaryParticipants">2</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Price per person:</span>
+                                    <span id="summaryPricePerPerson">$0</span>
+                                </div>
+                                <hr>
+                                <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.2rem;">
+                                    <span>Total Amount:</span>
+                                    <span id="summaryTotal">$0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem;">
+                            Book Safari
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Feedback Section -->
+            <section class="content-section" id="feedback">
+                <div class="section-header">
+                    <h2 class="section-title">My Feedback & Reviews</h2>
+                </div>
+
+                <div id="feedbackList">
+                    <!-- Feedback items will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section class="content-section" id="profile">
+                <div class="section-header">
+                    <h2 class="section-title">My Profile</h2>
+                </div>
+
+                <div class="profile-form">
+                    <form id="profileForm">
+                        <div class="form-section">
+                            <h3>Personal Information</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="profileFirstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="profileLastName" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="profileEmail" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" id="profilePhone" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Nationality</label>
+                                <select class="form-control" id="profileNationality">
+                                    <option value="LK">Sri Lankan</option>
+                                    <option value="US">American</option>
+                                    <option value="UK">British</option>
+                                    <option value="AU">Australian</option>
+                                    <option value="CA">Canadian</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Emergency Contact</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Emergency Contact Name</label>
+                                    <input type="text" class="form-control" id="emergencyName">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Emergency Contact Phone</label>
+                                    <input type="tel" class="form-control" id="emergencyPhone">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            Update Profile
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Preferences Section -->
+            <section class="content-section" id="preferences">
+                <div class="section-header">
+                    <h2 class="section-title">Preferences</h2>
+                </div>
+
+                <div class="profile-form">
+                    <div class="form-section">
+                        <h3>Notification Preferences</h3>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin: 1rem 0;">
+                            <input type="checkbox" id="emailNotifications" checked>
+                            <label for="emailNotifications">Email notifications for booking updates</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin: 1rem 0;">
+                            <input type="checkbox" id="smsNotifications" checked>
+                            <label for="smsNotifications">SMS notifications for important updates</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin: 1rem 0;">
+                            <input type="checkbox" id="promotionalEmails">
+                            <label for="promotionalEmails">Promotional emails and special offers</label>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Safari Preferences</h3>
+                        <div class="form-group">
+                            <label class="form-label">Preferred Safari Time</label>
+                            <select class="form-control" id="preferredTime">
+                                <option value="morning">Morning (6:00 AM - 9:00 AM)</option>
+                                <option value="evening">Evening (3:30 PM - 6:30 PM)</option>
+                                <option value="fullday">Full Day (6:00 AM - 6:00 PM)</option>
+                                <option value="no-preference">No Preference</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Interests</label>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 0.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="bigCats">
+                                    <label for="bigCats">Big Cats (Leopards)</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="elephants">
+                                    <label for="elephants">Elephants</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="birdWatching">
+                                    <label for="birdWatching">Bird Watching</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="photography">
+                                    <label for="photography">Photography</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" onclick="savePreferences()">
+                        Save Preferences
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            if (!SafariApp.Auth.isAuthenticated()) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Initialize dashboard
+            initDashboard();
+            loadUserData();
+            loadBookings();
+
+            // Menu navigation
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    showSection(section);
+
+                    // Update active menu item
+                    document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Initialize new booking form
+            initNewBookingForm();
+        });
+
+        function initDashboard() {
+            // Set minimum date for booking
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('newSafariDate').min = tomorrow.toISOString().split('T')[0];
+        }
+
+        async function loadUserData() {
+            try {
+                const user = await SafariApp.Auth.getCurrentUser();
+                document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('welcomeName').textContent = user.firstName;
+                document.getElementById('userAvatar').textContent = user.firstName.charAt(0).toUpperCase();
+
+                // Load profile form
+                document.getElementById('profileFirstName').value = user.firstName;
+                document.getElementById('profileLastName').value = user.lastName;
+                document.getElementById('profileEmail').value = user.email;
+                document.getElementById('profilePhone').value = user.phone || '';
+                document.getElementById('profileNationality').value = user.nationality || '';
+
             } catch (error) {
-                console.error('Error loading packages:', error);
-                showMessage('Error loading packages', 'error');
+                console.error('Failed to load user data:', error);
             }
         }
 
         async function loadBookings() {
             try {
-                const response = await fetch(`${API_BASE}/bookings/my-bookings`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                const bookings = await response.json();
+                const bookings = await SafariApp.API.get('/api/bookings/my-bookings');
 
-                const bookingsList = document.getElementById('bookingsList');
+                // Update stats
+                document.getElementById('totalBookings').textContent = bookings.length;
+                document.getElementById('completedSafaris').textContent = bookings.filter(b => b.status === 'COMPLETED').length;
 
-                if (bookings.length === 0) {
-                    bookingsList.innerHTML = '<p class="text-gray-500">No bookings found. Create your first booking from the packages tab!</p>';
-                } else {
-                    bookingsList.innerHTML = bookings.map(booking => `
-                        <div class="border border-gray-200 rounded-lg p-4 mb-4">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="text-lg font-semibold">Booking #${booking.id}</h4>
-                                    <p class="text-gray-600">${booking.packageName}</p>
-                                    <p class="text-sm text-gray-500">Date: ${booking.requestedDate} at ${booking.requestedTime}</p>
-                                    <p class="text-sm text-gray-500">Amount: $${booking.totalAmount}</p>
-                                </div>
-                                <div class="text-right">
-                                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(booking.status)}">
-                                        ${booking.status}
-                                    </span>
-                                    ${booking.canEdit ? `
-                                        <div class="mt-2 space-x-2">
-                                            <button onclick="editBooking(${booking.id})" class="text-blue-600 hover:text-blue-800 text-sm">Edit</button>
-                                            <button onclick="cancelBooking(${booking.id})" class="text-red-600 hover:text-red-800 text-sm">Cancel</button>
-                                        </div>
-                                        <p class="text-xs text-gray-500 mt-1">Edit window expires: ${new Date(booking.editWindowExpires).toLocaleString()}</p>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                }
+                // Load recent bookings
+                const recentBookings = bookings.slice(0, 3);
+                displayBookings(recentBookings, 'recentBookings');
+
+                // Load all bookings
+                displayBookings(bookings, 'allBookings');
+
             } catch (error) {
-                console.error('Error loading bookings:', error);
-                showMessage('Error loading bookings', 'error');
+                console.error('Failed to load bookings:', error);
+                // Show mock data for demo
+                loadMockBookings();
             }
         }
 
-        function openBookingModal(packageId, packageName) {
-            document.getElementById('selectedPackageId').value = packageId;
-            document.getElementById('selectedPackageName').textContent = packageName;
-            document.getElementById('bookingModal').classList.remove('hidden');
+        function loadMockBookings() {
+            const mockBookings = [
+                {
+                    id: 'RNW-2025-001234',
+                    packageName: 'Morning Safari',
+                    date: '2025-01-15',
+                    time: '06:00',
+                    participants: 2,
+                    totalAmount: 150,
+                    status: 'CONFIRMED',
+                    guideName: 'Kumara Perera',
+                    driverName: 'Nimal Silva'
+                },
+                {
+                    id: 'RNW-2025-001235',
+                    packageName: 'Evening Safari',
+                    date: '2025-01-20',
+                    time: '15:30',
+                    participants: 4,
+                    totalAmount: 340,
+                    status: 'PENDING',
+                    guideName: 'Pending Assignment',
+                    driverName: 'Pending Assignment'
+                }
+            ];
+
+            displayBookings(mockBookings, 'recentBookings');
+            displayBookings(mockBookings, 'allBookings');
         }
 
-        function closeBookingModal() {
-            document.getElementById('bookingModal').classList.add('hidden');
-            document.getElementById('bookingForm').reset();
+        function displayBookings(bookings, containerId) {
+            const container = document.getElementById(containerId);
+
+            if (bookings.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: var(--text-light);">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📅</div>
+                        <h3>No bookings yet</h3>
+                        <p>Ready to book your first safari adventure?</p>
+                        <button class="btn btn-primary" onclick="showSection('new-booking')">Book Now</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = bookings.map(booking => `
+                <div class="booking-card" data-status="${booking.status}">
+                    <div class="booking-header">
+                        <div class="booking-id">${booking.id}</div>
+                        <div class="status-badge status-${booking.status.toLowerCase()}">${booking.status}</div>
+                    </div>
+
+                    <h4 style="color: var(--primary-color); margin-bottom: 1rem;">${booking.packageName}</h4>
+
+                    <div class="booking-details">
+                        <div class="detail-item">
+                            <span class="detail-icon">📅</span>
+                            <span>${SafariApp.formatDate(booking.date)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">🕐</span>
+                            <span>${booking.time}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">👥</span>
+                            <span>${booking.participants} participants</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">💰</span>
+                            <span>${SafariApp.formatCurrency(booking.totalAmount)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">🧭</span>
+                            <span>Guide: ${booking.guideName}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">🚗</span>
+                            <span>Driver: ${booking.driverName}</span>
+                        </div>
+                    </div>
+
+                    <div class="booking-actions">
+                        ${booking.status === 'PENDING' ? `
+                            <button class="btn btn-outline btn-sm" onclick="editBooking('${booking.id}')">Edit</button>
+                            <button class="btn btn-sm" style="background: #dc3545; color: white;" onclick="cancelBooking('${booking.id}')">Cancel</button>
+                        ` : ''}
+                        ${booking.status === 'CONFIRMED' ? `
+                            <button class="btn btn-primary btn-sm" onclick="viewBookingDetails('${booking.id}')">View Details</button>
+                        ` : ''}
+                        ${booking.status === 'COMPLETED' ? `
+                            <button class="btn btn-primary btn-sm" onclick="leaveFeedback('${booking.id}')">Leave Feedback</button>
+                            <button class="btn btn-outline btn-sm" onclick="viewFeedback('${booking.id}')">View Feedback</button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
         }
 
-        document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+        function initNewBookingForm() {
+            const packageOptions = document.querySelectorAll('.package-option');
+            const participantsInput = document.getElementById('newParticipants');
+
+            packageOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    packageOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    updateBookingSummary();
+                });
+            });
+
+            participantsInput.addEventListener('input', updateBookingSummary);
+
+            document.getElementById('newBookingForm').addEventListener('submit', handleNewBooking);
+        }
+
+        function updateBookingSummary() {
+            const selectedPackage = document.querySelector('.package-option.selected');
+            const participants = parseInt(document.getElementById('newParticipants').value) || 1;
+
+            if (selectedPackage) {
+                const packageName = selectedPackage.querySelector('h4').textContent;
+                const pricePerPerson = parseInt(selectedPackage.dataset.price);
+                const total = pricePerPerson * participants;
+
+                document.getElementById('selectedPackageName').textContent = packageName;
+                document.getElementById('summaryParticipants').textContent = participants;
+                document.getElementById('summaryPricePerPerson').textContent = `$${pricePerPerson}`;
+                document.getElementById('summaryTotal').textContent = `$${total}`;
+            }
+        }
+
+        async function handleNewBooking(e) {
             e.preventDefault();
 
-            const formData = {
-                packageId: parseInt(document.getElementById('selectedPackageId').value),
-                requestedDate: document.getElementById('requestedDate').value,
-                requestedTime: document.getElementById('requestedTime').value,
-                notes: document.getElementById('notes').value
+            const selectedPackage = document.querySelector('.package-option.selected');
+            if (!selectedPackage) {
+                SafariApp.Notifications.error('Please select a safari package');
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const data = {
+                packageType: selectedPackage.dataset.package,
+                date: document.getElementById('newSafariDate').value,
+                participants: parseInt(document.getElementById('newParticipants').value),
+                specialRequests: document.getElementById('newSpecialRequests').value,
+                pricePerPerson: parseInt(selectedPackage.dataset.price),
+                totalAmount: parseInt(selectedPackage.dataset.price) * parseInt(document.getElementById('newParticipants').value)
             };
 
             try {
-                const response = await fetch(`${API_BASE}/bookings`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(formData)
-                });
+                const response = await SafariApp.API.post('/api/bookings/create', data);
+                SafariApp.Notifications.success('Booking created successfully!');
 
-                if (response.ok) {
-                    showMessage('Booking created successfully!', 'success');
-                    closeBookingModal();
-                    if (currentTab === 'bookings') {
-                        loadBookings();
-                    }
-                } else {
-                    const error = await response.json();
-                    showMessage(error.message || 'Error creating booking', 'error');
-                }
+                // Reset form
+                e.target.reset();
+                document.querySelectorAll('.package-option').forEach(opt => opt.classList.remove('selected'));
+                updateBookingSummary();
+
+                // Reload bookings
+                loadBookings();
+
+                // Switch to bookings view
+                showSection('bookings');
+
             } catch (error) {
-                console.error('Error creating booking:', error);
-                showMessage('Network error. Please try again.', 'error');
+                SafariApp.Notifications.error('Failed to create booking. Please try again.');
             }
-        });
+        }
 
-        function getStatusColor(status) {
-            const colors = {
-                'REQUESTED': 'bg-yellow-100 text-yellow-800',
-                'FORWARDED_TO_CREW': 'bg-blue-100 text-blue-800',
-                'ALLOCATED': 'bg-purple-100 text-purple-800',
-                'CONFIRMATION_SENT': 'bg-indigo-100 text-indigo-800',
-                'PENDING_PAYMENT': 'bg-orange-100 text-orange-800',
-                'CONFIRMED': 'bg-green-100 text-green-800',
-                'CANCELLED': 'bg-red-100 text-red-800',
-                'EXPIRED': 'bg-gray-100 text-gray-800'
-            };
-            return colors[status] || 'bg-gray-100 text-gray-800';
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
         }
 
         function logout() {
-            localStorage.clear();
-            window.location.href = '../index.html';
+            SafariApp.Auth.logout();
         }
 
-        function showMessage(message, type) {
-            // Simple alert for now - could be enhanced with better UI
-            alert(message);
+        // Mock functions for demo
+        function editBooking(id) {
+            SafariApp.Notifications.info(`Edit booking ${id} - Feature coming soon!`);
         }
 
-        // Initialize
-        showTab('packages');
+        function cancelBooking(id) {
+            if (confirm('Are you sure you want to cancel this booking?')) {
+                SafariApp.Notifications.success('Booking cancelled successfully');
+                loadBookings();
+            }
+        }
+
+        function viewBookingDetails(id) {
+            SafariApp.Notifications.info(`View details for booking ${id} - Feature coming soon!`);
+        }
+
+        function leaveFeedback(id) {
+            window.location.href = `../contact.html?booking=${id}#feedback`;
+        }
+
+        function viewFeedback(id) {
+            SafariApp.Notifications.info(`View feedback for booking ${id} - Feature coming soon!`);
+        }
+
+        function savePreferences() {
+            SafariApp.Notifications.success('Preferences saved successfully!');
+        }
     </script>
-
-    <style>
-        .tab-button {
-            @apply py-2 px-4 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent hover:border-gray-300;
-        }
-        .tab-button.active {
-            @apply text-safari-green border-safari-green;
-        }
-    </style>
 </body>
 </html>
+

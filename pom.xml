@@ -148,6 +148,7 @@
             <scope>provided</scope>
         </dependency>
 
+
     </dependencies>
 
     <build>
@@ -185,7 +186,13 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.5.6</version> <!-- match your Spring Boot version -->
+            </plugin>
         </plugins>
+
     </build>
 
 </project>

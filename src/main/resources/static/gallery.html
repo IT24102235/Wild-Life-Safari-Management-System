@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - Ranweli Safari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .gallery-section {
+            padding: 6rem 0 4rem;
+            background: var(--background-color);
+        }
+
+        .gallery-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .gallery-tab {
+            padding: 0.75rem 2rem;
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .gallery-tab.active,
+        .gallery-tab:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            aspect-ratio: 4/3;
+            background: #f0f0f0;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .gallery-item img,
+        .gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img,
+        .gallery-item:hover video {
+            transform: scale(1.05);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .gallery-info h3 {
+            color: white;
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .gallery-info p {
+            color: rgba(255,255,255,0.9);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .gallery-item:hover .play-button {
+            background: white;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 2rem;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .lightbox img,
+        .lightbox video {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">Ranweli Safari</a>
+
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="gallery.html" class="active">Gallery</a></li>
+                <li><a href="visitor-guide.html">Visitor Guide</a></li>
+                <li><a href="what-to-do.html">What To Do</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="signup.html" class="btn btn-primary">Book Safari</a>
+            </div>
+
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section">
+        <div class="container">
+            <div class="section-header">
+                <h1 class="section-title fade-in">Wildlife Gallery</h1>
+                <p class="section-subtitle fade-in">Discover the incredible wildlife and breathtaking landscapes of Ranweli National Park</p>
+            </div>
+
+            <!-- Gallery Tabs -->
+            <div class="gallery-tabs fade-in">
+                <button class="gallery-tab active" data-category="all">All Media</button>
+                <button class="gallery-tab" data-category="photos">Photos</button>
+                <button class="gallery-tab" data-category="videos">Videos</button>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="filter-buttons fade-in">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="elephants">Elephants</button>
+                <button class="filter-btn" data-filter="leopards">Leopards</button>
+                <button class="filter-btn" data-filter="birds">Birds</button>
+                <button class="filter-btn" data-filter="landscapes">Landscapes</button>
+                <button class="filter-btn" data-filter="safari">Safari Experience</button>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="gallery-grid fade-in" id="galleryGrid">
+                <!-- Photos -->
+                <div class="gallery-item" data-type="photo" data-category="elephants" data-src="https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=800">
+                    <img src="https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=400" alt="Elephant Herd" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>Elephant Herd</h3>
+                            <p>Majestic elephants gathering at the watering hole</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-type="photo" data-category="leopards" data-src="https://images.unsplash.com/photo-1551969014-7d2c4cddf0b6?w=800">
+                    <img src="https://images.unsplash.com/photo-1551969014-7d2c4cddf0b6?w=400" alt="Leopard" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>Sri Lankan Leopard</h3>
+                            <p>The elusive leopard in its natural habitat</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-type="photo" data-category="birds" data-src="https://images.unsplash.com/photo-1444927714506-8492d94b5ba0?w=800">
+                    <img src="https://images.unsplash.com/photo-1444927714506-8492d94b5ba0?w=400" alt="Peacock" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>Indian Peafowl</h3>
+                            <p>Colorful peacock displaying its magnificent plumage</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-type="photo" data-category="landscapes" data-src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800">
+                    <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400" alt="Safari Landscape" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>Park Landscape</h3>
+                            <p>The vast plains of Ranweli National Park</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-type="photo" data-category="safari" data-src="https://images.unsplash.com/photo-1549366021-9f761d040a94?w=800">
+                    <img src="https://images.unsplash.com/photo-1549366021-9f761d040a94?w=400" alt="Safari Vehicle" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>Safari Adventure</h3>
+                            <p>Exploring the wilderness in our 4x4 vehicles</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-type="photo" data-category="elephants" data-src="https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=800">
+                    <img src="https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=400" alt="Baby Elephant" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>Baby Elephant</h3>
+                            <p>Adorable elephant calf with its mother</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Videos -->
+                <div class="gallery-item" data-type="video" data-category="elephants" data-src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4">
+                    <img src="https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=400" alt="Elephant Video" loading="lazy">
+                    <div class="play-button">▶</div>
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>Elephant Bathing</h3>
+                            <p>Watch elephants enjoying their bath time</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-type="video" data-category="leopards" data-src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4">
+                    <img src="https://images.unsplash.com/photo-1551969014-7d2c4cddf0b6?w=400" alt="Leopard Video" loading="lazy">
+                    <div class="play-button">▶</div>
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>Leopard Hunt</h3>
+                            <p>Witness the stealth and grace of a hunting leopard</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-type="photo" data-category="birds" data-src="https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=800">
+                    <img src="https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=400" alt="Eagle" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>Fish Eagle</h3>
+                            <p>Majestic fish eagle soaring over the water</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-type="photo" data-category="landscapes" data-src="https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800">
+                    <img src="https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400" alt="Sunset Safari" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>Sunset Safari</h3>
+                            <p>Golden hour magic in the national park</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-type="video" data-category="safari" data-src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4">
+                    <img src="https://images.unsplash.com/photo-1549366021-9f761d040a94?w=400" alt="Safari Experience Video" loading="lazy">
+                    <div class="play-button">▶</div>
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>Safari Experience</h3>
+                            <p>Take a virtual safari tour with us</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-type="photo" data-category="birds" data-src="https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=800">
+                    <img src="https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=400" alt="Hornbill" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>Malabar Hornbill</h3>
+                            <p>Colorful hornbill in the canopy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: var(--primary-color); color: white; padding: 3rem 0 1rem;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                <div>
+                    <h3 style="margin-bottom: 1rem;">Ranweli Safari</h3>
+                    <p>Experience the wild beauty of Sri Lanka's premier national park with expert guides and premium service.</p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Quick Links</h4>
+                    <ul style="list-style: none;">
+                        <li><a href="/" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Home</a></li>
+                        <li><a href="visitor-guide.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Visitor Guide</a></li>
+                        <li><a href="what-to-do.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">What To Do</a></li>
+                        <li><a href="contact.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Contact Info</h4>
+                    <p>📧 info@ranwelisafari.com</p>
+                    <p>📞 +94 77 123 4567</p>
+                    <p>📍 Ranweli National Park, Sri Lanka</p>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                <p>&copy; 2025 Ranweli Safari Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Gallery functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const galleryTabs = document.querySelectorAll('.gallery-tab');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+
+            // Tab functionality
+            galleryTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    galleryTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    filterGallery();
+                });
+            });
+
+            // Filter functionality
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    filterGallery();
+                });
+            });
+
+            function filterGallery() {
+                const activeTab = document.querySelector('.gallery-tab.active').dataset.category;
+                const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+
+                galleryItems.forEach(item => {
+                    const itemType = item.dataset.type;
+                    const itemCategory = item.dataset.category;
+
+                    let showItem = true;
+
+                    // Tab filter
+                    if (activeTab !== 'all') {
+                        if (activeTab === 'photos' && itemType !== 'photo') showItem = false;
+                        if (activeTab === 'videos' && itemType !== 'video') showItem = false;
+                    }
+
+                    // Category filter
+                    if (activeFilter !== 'all' && itemCategory !== activeFilter) {
+                        showItem = false;
+                    }
+
+                    item.style.display = showItem ? 'block' : 'none';
+                });
+            }
+
+            // Lightbox functionality
+            galleryItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    openLightbox(item);
+                });
+            });
+
+            function openLightbox(item) {
+                const lightbox = document.createElement('div');
+                lightbox.className = 'lightbox';
+
+                const isVideo = item.dataset.type === 'video';
+                const src = item.dataset.src;
+
+                const content = isVideo
+                    ? `<video controls autoplay><source src="${src}" type="video/mp4">Your browser does not support the video tag.</video>`
+                    : `<img src="${src}" alt="Gallery Image">`;
+
+                lightbox.innerHTML = `
+                    <div class="lightbox-content">
+                        ${content}
+                        <button class="lightbox-close">&times;</button>
+                    </div>
+                `;
+
+                document.body.appendChild(lightbox);
+                document.body.style.overflow = 'hidden';
+
+                // Close functionality
+                lightbox.addEventListener('click', (e) => {
+                    if (e.target === lightbox || e.target.classList.contains('lightbox-close')) {
+                        document.body.removeChild(lightbox);
+                        document.body.style.overflow = '';
+                    }
+                });
+
+                // Escape key close
+                document.addEventListener('keydown', function closeOnEscape(e) {
+                    if (e.key === 'Escape') {
+                        if (document.body.contains(lightbox)) {
+                            document.body.removeChild(lightbox);
+                            document.body.style.overflow = '';
+                        }
+                        document.removeEventListener('keydown', closeOnEscape);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

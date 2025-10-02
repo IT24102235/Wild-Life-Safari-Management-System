@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Officer Dashboard - Ranweli Safari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+            background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+            color: white;
+        }
+
+        .booking-badge {
+            background: #17a2b8;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+
+        .performance-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .performance-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: #f8f9fa;
+            border-left-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 5px solid #17a2b8;
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .priority-high { border-left-color: #dc3545; }
+        .priority-medium { border-left-color: #ffc107; }
+        .priority-low { border-left-color: #28a745; }
+
+        .customer-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-action-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .quick-action-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .communication-log {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .communication-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .communication-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #17a2b8;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .payment-tracker {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .payment-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .payment-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .payment-paid { background: #28a745; }
+        .payment-pending { background: #ffc107; }
+        .payment-overdue { background: #dc3545; }
+
+        .calendar-widget {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 0.9rem;
+        }
+
+        .calendar-day.has-bookings {
+            background: #e3f2fd;
+            border-color: #17a2b8;
+            font-weight: 600;
+        }
+
+        .calendar-day:hover {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .booking-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 6px;
+            height: 6px;
+            background: #17a2b8;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3 id="officerName">Sarah Johnson</h3>
+                <div class="booking-badge">BOOKING OFFICER</div>
+                <div class="performance-card">
+                    <div class="performance-number" id="dailyBookings">23</div>
+                    <div class="performance-label">Today's Bookings</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                    <div style="text-align: center;">
+                        <div class="performance-number" id="conversionRate">78%</div>
+                        <div class="performance-label">Conversion</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div class="performance-number" id="customerSat">4.9</div>
+                        <div class="performance-label">Satisfaction</div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-section="overview">
+                    <span class="menu-icon">📊</span>
+                    Overview
+                </a>
+                <a href="#" class="menu-item" data-section="bookings">
+                    <span class="menu-icon">📅</span>
+                    Manage Bookings
+                </a>
+                <a href="#" class="menu-item" data-section="inquiries">
+                    <span class="menu-icon">💬</span>
+                    Customer Inquiries
+                </a>
+                <a href="#" class="menu-item" data-section="payments">
+                    <span class="menu-icon">💳</span>
+                    Payment Tracking
+                </a>
+                <a href="#" class="menu-item" data-section="calendar">
+                    <span class="menu-icon">📆</span>
+                    Booking Calendar
+                </a>
+                <a href="#" class="menu-item" data-section="customers">
+                    <span class="menu-icon">👥</span>
+                    Customer Management
+                </a>
+                <a href="#" class="menu-item" data-section="reports">
+                    <span class="menu-icon">📈</span>
+                    Reports
+                </a>
+            </nav>
+
+            <div style="padding: 2rem;">
+                <button class="logout-btn" style="background: #dc3545; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; width: 100%;" onclick="logout()">
+                    🚪 Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview Section -->
+            <section class="content-section active" id="overview">
+                <div class="section-header">
+                    <h1>Booking Officer Dashboard</h1>
+                    <p>Manage bookings, inquiries, and customer service</p>
+                </div>
+
+                <div class="quick-actions">
+                    <div class="quick-action-card" onclick="showSection('bookings')">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📅</div>
+                        <h4>New Booking</h4>
+                        <p>Create a new safari booking</p>
+                    </div>
+
+                    <div class="quick-action-card" onclick="showSection('inquiries')">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💬</div>
+                        <h4>Customer Inquiry</h4>
+                        <p>Respond to customer questions</p>
+                    </div>
+
+                    <div class="quick-action-card" onclick="showSection('payments')">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💳</div>
+                        <h4>Payment Follow-up</h4>
+                        <p>Track pending payments</p>
+                    </div>
+
+                    <div class="quick-action-card" onclick="showSection('calendar')">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📆</div>
+                        <h4>Check Availability</h4>
+                        <p>View booking calendar</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-number" id="todayBookings">23</div>
+                        <div class="stat-label">Today's Bookings</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-number" id="pendingBookings">7</div>
+                        <div class="stat-label">Pending Confirmation</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-number" id="todayRevenue">$3,450</div>
+                        <div class="stat-label">Today's Revenue</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">📞</div>
+                        <div class="stat-number" id="inquiries">12</div>
+                        <div class="stat-label">Open Inquiries</div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2>Priority Actions</h2>
+                </div>
+
+                <div id="priorityBookings">
+                    <!-- Priority bookings will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Bookings Management Section -->
+            <section class="content-section" id="bookings">
+                <div class="section-header">
+                    <h2>Booking Management</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="exportBookings()">Export</button>
+                        <button class="btn btn-primary" onclick="openNewBookingModal()">New Booking</button>
+                    </div>
+                </div>
+
+                <div class="filter-buttons" style="margin-bottom: 2rem;">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="pending">Pending</button>
+                    <button class="filter-btn" data-filter="confirmed">Confirmed</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                    <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+                </div>
+
+                <div id="allBookingsList">
+                    <!-- All bookings will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Customer Inquiries Section -->
+            <section class="content-section" id="inquiries">
+                <div class="section-header">
+                    <h2>Customer Inquiries</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="open">Open</button>
+                        <button class="filter-btn" data-filter="pending">Pending Response</button>
+                        <button class="filter-btn" data-filter="resolved">Resolved</button>
+                    </div>
+                </div>
+
+                <div id="inquiriesList">
+                    <!-- Inquiries will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Payment Tracking Section -->
+            <section class="content-section" id="payments">
+                <div class="section-header">
+                    <h2>Payment Tracking</h2>
+                </div>
+
+                <div class="payment-tracker">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem;">Payment Status Overview</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; color: #28a745; font-weight: 700;">$12,450</div>
+                            <div>Paid Today</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; color: #ffc107; font-weight: 700;">$3,200</div>
+                            <div>Pending</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; color: #dc3545; font-weight: 700;">$850</div>
+                            <div>Overdue</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; color: var(--primary-color); font-weight: 700;">94%</div>
+                            <div>Collection Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="paymentsList">
+                    <!-- Payment items will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Booking Calendar Section -->
+            <section class="content-section" id="calendar">
+                <div class="section-header">
+                    <h2>Booking Calendar</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="previousMonth()">← Previous</button>
+                        <span style="margin: 0 1rem; font-weight: 600;">January 2025</span>
+                        <button class="btn btn-outline" onclick="nextMonth()">Next →</button>
+                    </div>
+                </div>
+
+                <div class="calendar-widget">
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1rem; margin-bottom: 1rem; text-align: center; font-weight: 600;">
+                        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1rem;" id="calendarGrid">
+                        <!-- Calendar days will be generated here -->
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Today's Schedule</h4>
+                        <div id="todaySchedule">
+                            <!-- Today's bookings will be shown here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Customer Management Section -->
+            <section class="content-section" id="customers">
+                <div class="section-header">
+                    <h2>Customer Management</h2>
+                    <div class="search-filter">
+                        <input type="text" class="search-input" placeholder="Search customers..." id="customerSearch">
+                        <select class="filter-select" id="customerTypeFilter">
+                            <option value="">All Customers</option>
+                            <option value="new">New Customers</option>
+                            <option value="returning">Returning Customers</option>
+                            <option value="vip">VIP Customers</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="customersList">
+                    <!-- Customer list will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section class="content-section" id="reports">
+                <div class="section-header">
+                    <h2>Booking Reports</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="generateReport()">Generate Report</button>
+                        <button class="btn btn-primary" onclick="exportReport()">Export Data</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-number">156</div>
+                        <div class="stat-label">This Month's Bookings</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-number">$45,600</div>
+                        <div class="stat-label">Monthly Revenue</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-number">89%</div>
+                        <div class="stat-label">Booking Conversion</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-number">12%</div>
+                        <div class="stat-label">Cancellation Rate</div>
+                    </div>
+                </div>
+
+                <div class="chart-container" style="background: white; border-radius: 15px; padding: 2rem; box-shadow: var(--shadow); margin: 2rem 0;">
+                    <h3>Booking Trends</h3>
+                    <div style="height: 300px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-light); margin-top: 1rem;">
+                        📊 Booking trends chart placeholder
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            if (!SafariApp.Auth.isAuthenticated() || SafariApp.Auth.getUserRole() !== 'BOOKING_OFFICER') {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Initialize dashboard
+            loadPriorityBookings();
+            loadBookings();
+            loadInquiries();
+            loadPayments();
+            generateCalendar();
+            loadCustomers();
+
+            // Menu navigation
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    showSection(section);
+
+                    document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+
+        function loadPriorityBookings() {
+            // Mock priority bookings
+            const priorityBookings = [
+                {
+                    id: 'RNW-2025-001234',
+                    customerName: 'John Smith',
+                    priority: 'high',
+                    issue: 'Payment pending - requires follow-up',
+                    package: 'Morning Safari',
+                    date: '2025-01-15'
+                },
+                {
+                    id: 'RNW-2025-001235',
+                    customerName: 'Emma Johnson',
+                    priority: 'medium',
+                    issue: 'Special dietary requirements to confirm',
+                    package: 'Full Day Safari',
+                    date: '2025-01-16'
+                }
+            ];
+
+            document.getElementById('priorityBookings').innerHTML = priorityBookings.map(booking => `
+                <div class="booking-card priority-${booking.priority}">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <div>
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">${booking.customerName}</h4>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">Booking: ${booking.id}</p>
+                        </div>
+                        <div class="status-badge status-${booking.priority === 'high' ? 'cancelled' : 'pending'}">${booking.priority.toUpperCase()} PRIORITY</div>
+                    </div>
+
+                    <div class="customer-info">
+                        <p><strong>Issue:</strong> ${booking.issue}</p>
+                        <p><strong>Package:</strong> ${booking.package}</p>
+                        <p><strong>Date:</strong> ${SafariApp.formatDate(booking.date)}</p>
+                    </div>
+
+                    <div class="booking-actions">
+                        <button class="btn btn-primary btn-sm" onclick="handlePriorityBooking('${booking.id}')">Take Action</button>
+                        <button class="btn btn-outline btn-sm" onclick="contactCustomer('${booking.id}')">Contact Customer</button>
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="viewBookingDetails('${booking.id}')">View Details</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadBookings() {
+            // Mock booking data
+            const bookings = [
+                {
+                    id: 'RNW-2025-001234',
+                    customerName: 'John Smith',
+                    package: 'Morning Safari',
+                    date: '2025-01-15',
+                    participants: 2,
+                    amount: 150,
+                    status: 'confirmed',
+                    paymentStatus: 'paid'
+                },
+                {
+                    id: 'RNW-2025-001235',
+                    customerName: 'Emma Johnson',
+                    package: 'Evening Safari',
+                    date: '2025-01-16',
+                    participants: 4,
+                    amount: 340,
+                    status: 'pending',
+                    paymentStatus: 'pending'
+                }
+            ];
+
+            document.getElementById('allBookingsList').innerHTML = bookings.map(booking => `
+                <div class="booking-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <div>
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">${booking.customerName}</h4>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">Booking: ${booking.id}</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <div class="status-badge status-${booking.status}">${booking.status.toUpperCase()}</div>
+                            <div class="status-badge ${booking.paymentStatus === 'paid' ? 'status-confirmed' : 'status-pending'}">${booking.paymentStatus.toUpperCase()}</div>
+                        </div>
+                    </div>
+
+                    <div class="customer-info">
+                        <p><strong>Package:</strong> ${booking.package}</p>
+                        <p><strong>Date:</strong> ${SafariApp.formatDate(booking.date)}</p>
+                        <p><strong>Participants:</strong> ${booking.participants}</p>
+                        <p><strong>Amount:</strong> ${SafariApp.formatCurrency(booking.amount)}</p>
+                    </div>
+
+                    <div class="booking-actions">
+                        <button class="btn btn-primary btn-sm" onclick="editBooking('${booking.id}')">Edit</button>
+                        <button class="btn btn-outline btn-sm" onclick="contactCustomer('${booking.id}')">Contact</button>
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="processPayment('${booking.id}')">Payment</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadInquiries() {
+            // Mock inquiry data
+            const inquiries = [
+                {
+                    id: 'INQ-001',
+                    customerName: 'Michael Chen',
+                    subject: 'Photography Safari Question',
+                    message: 'What camera equipment is recommended for the photography safari?',
+                    priority: 'medium',
+                    status: 'open',
+                    date: '2025-01-14'
+                },
+                {
+                    id: 'INQ-002',
+                    customerName: 'Lisa Wong',
+                    subject: 'Group Booking Discount',
+                    message: 'We are a group of 8 people. Do you offer group discounts?',
+                    priority: 'high',
+                    status: 'pending',
+                    date: '2025-01-13'
+                }
+            ];
+
+            document.getElementById('inquiriesList').innerHTML = inquiries.map(inquiry => `
+                <div class="booking-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <div>
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">${inquiry.customerName}</h4>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">Inquiry: ${inquiry.id}</p>
+                        </div>
+                        <div class="status-badge status-${inquiry.status}">${inquiry.status.toUpperCase()}</div>
+                    </div>
+
+                    <div class="customer-info">
+                        <p><strong>Subject:</strong> ${inquiry.subject}</p>
+                        <p><strong>Message:</strong> ${inquiry.message}</p>
+                        <p><strong>Date:</strong> ${SafariApp.formatDate(inquiry.date)}</p>
+                    </div>
+
+                    <div class="booking-actions">
+                        <button class="btn btn-primary btn-sm" onclick="respondToInquiry('${inquiry.id}')">Respond</button>
+                        <button class="btn btn-outline btn-sm" onclick="createBookingFromInquiry('${inquiry.id}')">Create Booking</button>
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="markResolved('${inquiry.id}')">Mark Resolved</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadPayments() {
+            // Mock payment data
+            const payments = [
+                {
+                    id: 'PAY-001',
+                    bookingId: 'RNW-2025-001234',
+                    customerName: 'John Smith',
+                    amount: 150,
+                    status: 'pending',
+                    dueDate: '2025-01-16',
+                    method: 'Credit Card'
+                },
+                {
+                    id: 'PAY-002',
+                    bookingId: 'RNW-2025-001235',
+                    customerName: 'Emma Johnson',
+                    amount: 340,
+                    status: 'overdue',
+                    dueDate: '2025-01-14',
+                    method: 'Bank Transfer'
+                }
+            ];
+
+            document.getElementById('paymentsList').innerHTML = payments.map(payment => `
+                <div class="booking-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <div>
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">${payment.customerName}</h4>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">Payment: ${payment.id}</p>
+                        </div>
+                        <div class="payment-status">
+                            <div class="payment-indicator payment-${payment.status}"></div>
+                            <span class="status-badge status-${payment.status}">${payment.status.toUpperCase()}</span>
+                        </div>
+                    </div>
+
+                    <div class="customer-info">
+                        <p><strong>Booking:</strong> ${payment.bookingId}</p>
+                        <p><strong>Amount:</strong> ${SafariApp.formatCurrency(payment.amount)}</p>
+                        <p><strong>Due Date:</strong> ${SafariApp.formatDate(payment.dueDate)}</p>
+                        <p><strong>Method:</strong> ${payment.method}</p>
+                    </div>
+
+                    <div class="booking-actions">
+                        <button class="btn btn-primary btn-sm" onclick="processPayment('${payment.id}')">Process Payment</button>
+                        <button class="btn btn-outline btn-sm" onclick="sendReminder('${payment.id}')">Send Reminder</button>
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="viewPaymentDetails('${payment.id}')">Details</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function generateCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const days = [];
+
+            for (let i = 1; i <= 31; i++) {
+                const hasBookings = Math.random() > 0.7;
+                days.push(`
+                    <div class="calendar-day ${hasBookings ? 'has-bookings' : ''}" onclick="showDayBookings(${i})">
+                        ${i}
+                        ${hasBookings ? '<div class="booking-indicator"></div>' : ''}
+                    </div>
+                `);
+            }
+
+            grid.innerHTML = days.join('');
+
+            // Load today's schedule
+            document.getElementById('todaySchedule').innerHTML = `
+                <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                    <p><strong>06:00</strong> - Morning Safari (John Smith)</p>
+                    <p><strong>09:30</strong> - Photography Safari (Emma Johnson)</p>
+                    <p><strong>15:30</strong> - Evening Safari (Michael Chen)</p>
+                </div>
+            `;
+        }
+
+        function loadCustomers() {
+            // Mock customer data
+            const customers = [
+                {
+                    id: 'CUST-001',
+                    name: 'John Smith',
+                    email: 'john@example.com',
+                    phone: '+1 234 567 8901',
+                    bookings: 3,
+                    totalSpent: 450,
+                    lastBooking: '2025-01-15',
+                    type: 'returning'
+                }
+            ];
+
+            document.getElementById('customersList').innerHTML = customers.map(customer => `
+                <div class="booking-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <div>
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">${customer.name}</h4>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">${customer.email}</p>
+                        </div>
+                        <div class="status-badge status-${customer.type === 'returning' ? 'confirmed' : 'pending'}">${customer.type.toUpperCase()}</div>
+                    </div>
+
+                    <div class="customer-info">
+                        <p><strong>Phone:</strong> ${customer.phone}</p>
+                        <p><strong>Total Bookings:</strong> ${customer.bookings}</p>
+                        <p><strong>Total Spent:</strong> ${SafariApp.formatCurrency(customer.totalSpent)}</p>
+                        <p><strong>Last Booking:</strong> ${SafariApp.formatDate(customer.lastBooking)}</p>
+                    </div>
+
+                    <div class="booking-actions">
+                        <button class="btn btn-primary btn-sm" onclick="contactCustomer('${customer.id}')">Contact</button>
+                        <button class="btn btn-outline btn-sm" onclick="createBooking('${customer.id}')">New Booking</button>
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="viewCustomerHistory('${customer.id}')">History</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function logout() {
+            SafariApp.Auth.logout();
+        }
+
+        // Mock functions
+        function handlePriorityBooking(id) {
+            SafariApp.Notifications.success(`Handling priority booking ${id}!`);
+        }
+
+        function contactCustomer(id) {
+            SafariApp.Notifications.info(`Contacting customer for ${id} - Feature coming soon!`);
+        }
+
+        function viewBookingDetails(id) {
+            SafariApp.Notifications.info(`Viewing booking details ${id} - Feature coming soon!`);
+        }
+
+        function openNewBookingModal() {
+            SafariApp.Notifications.info('New booking form - Feature coming soon!');
+        }
+
+        function exportBookings() {
+            SafariApp.Notifications.success('Exporting bookings data...');
+        }
+
+        function processPayment(id) {
+            SafariApp.Notifications.info(`Processing payment ${id} - Feature coming soon!`);
+        }
+
+        function sendReminder(id) {
+            SafariApp.Notifications.success(`Payment reminder sent for ${id}!`);
+        }
+
+        function respondToInquiry(id) {
+            SafariApp.Notifications.info(`Responding to inquiry ${id} - Feature coming soon!`);
+        }
+
+        function showDayBookings(day) {
+            SafariApp.Notifications.info(`Showing bookings for day ${day} - Feature coming soon!`);
+        }
+
+        function generateReport() {
+            SafariApp.Notifications.info('Generating report - Feature coming soon!');
+        }
+
+        function exportReport() {
+            SafariApp.Notifications.success('Exporting report data...');
+        }
+    </script>
+</body>
+</html>
+

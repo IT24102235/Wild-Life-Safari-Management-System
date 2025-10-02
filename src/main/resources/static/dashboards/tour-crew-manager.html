@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tour & Crew Manager Dashboard - Ranweli Safari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+            background: linear-gradient(135deg, #20c997 0%, #6f42c1 100%);
+            color: white;
+        }
+
+        .manager-badge {
+            background: #20c997;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+
+        .performance-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .performance-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: #f8f9fa;
+            border-left-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .assignment-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 5px solid #20c997;
+        }
+
+        .assignment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .assignment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .staff-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 5px solid #20c997;
+        }
+
+        .staff-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .staff-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .staff-info {
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .staff-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .staff-stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #20c997;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .availability-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-available { background: #d4edda; color: #155724; }
+        .status-onduty { background: #d1ecf1; color: #0c5460; }
+        .status-unavailable { background: #f8d7da; color: #721c24; }
+        .status-leave { background: #fff3cd; color: #856404; }
+
+        .shift-planner {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .shift-grid {
+            display: grid;
+            grid-template-columns: 100px repeat(7, 1fr);
+            gap: 1px;
+            background: #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .shift-header {
+            background: #20c997;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .shift-cell {
+            background: white;
+            padding: 0.5rem;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .shift-cell:hover {
+            background: #f8f9fa;
+        }
+
+        .shift-assigned {
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .performance-overview {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .performance-metric {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #20c997;
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-assignment {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .assignment-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .crew-timeline {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-left: 3px solid #20c997;
+            margin-left: 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 1.5rem;
+            width: 12px;
+            height: 12px;
+            background: #20c997;
+            border-radius: 50%;
+        }
+
+        .timeline-time {
+            font-weight: 600;
+            color: #20c997;
+            min-width: 80px;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .workload-chart {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .workload-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .staff-name {
+            min-width: 120px;
+            font-weight: 600;
+        }
+
+        .workload-progress {
+            flex: 1;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .workload-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .workload-low { background: #28a745; }
+        .workload-medium { background: #ffc107; }
+        .workload-high { background: #fd7e14; }
+        .workload-overload { background: #dc3545; }
+
+        .workload-percentage {
+            min-width: 50px;
+            text-align: right;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3 id="managerName">Alex Thompson</h3>
+                <div class="manager-badge">TOUR & CREW MANAGER</div>
+                <div class="performance-card">
+                    <div class="performance-number" id="teamSize">25</div>
+                    <div class="performance-label">Team Members</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                    <div style="text-align: center;">
+                        <div class="performance-number" id="activeStaff">22</div>
+                        <div class="performance-label">On Duty</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div class="performance-number" id="teamEfficiency">94%</div>
+                        <div class="performance-label">Efficiency</div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-section="overview">
+                    <span class="menu-icon">📊</span>
+                    Overview
+                </a>
+                <a href="#" class="menu-item" data-section="assignments">
+                    <span class="menu-icon">📋</span>
+                    Staff Assignments
+                </a>
+                <a href="#" class="menu-item" data-section="crew">
+                    <span class="menu-icon">👥</span>
+                    Crew Management
+                </a>
+                <a href="#" class="menu-item" data-section="scheduling">
+                    <span class="menu-icon">📅</span>
+                    Shift Scheduling
+                </a>
+                <a href="#" class="menu-item" data-section="performance">
+                    <span class="menu-icon">📈</span>
+                    Team Performance
+                </a>
+                <a href="#" class="menu-item" data-section="training">
+                    <span class="menu-icon">🎓</span>
+                    Training & Development
+                </a>
+                <a href="#" class="menu-item" data-section="reports">
+                    <span class="menu-icon">📄</span>
+                    Reports
+                </a>
+            </nav>
+
+            <div style="padding: 2rem;">
+                <button class="logout-btn" style="background: #dc3545; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; width: 100%;" onclick="logout()">
+                    🚪 Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview Section -->
+            <section class="content-section active" id="overview">
+                <div class="section-header">
+                    <h1>Tour & Crew Manager Dashboard</h1>
+                    <p>Manage staff assignments, schedules, and team performance</p>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-number" id="totalStaff">25</div>
+                        <div class="stat-label">Total Staff</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-number" id="onDutyStaff">22</div>
+                        <div class="stat-label">On Duty Today</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-number" id="todayAssignments">18</div>
+                        <div class="stat-label">Today's Assignments</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-number" id="teamRating">4.7</div>
+                        <div class="stat-label">Team Avg Rating</div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2>Today's Operations</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="autoAssignStaff()">Auto Assign</button>
+                        <button class="btn btn-primary" onclick="showSection('assignments')">Manage Assignments</button>
+                    </div>
+                </div>
+
+                <div class="crew-timeline">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem;">Today's Schedule Timeline</h3>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">06:00</div>
+                        <div class="timeline-content">
+                            <h4>Morning Safari Team 1</h4>
+                            <p>Guide: Kumara Perera | Driver: Nimal Silva | Booking: RNW-001234</p>
+                            <div class="availability-status status-onduty">In Progress</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">06:30</div>
+                        <div class="timeline-content">
+                            <h4>Photography Safari Team</h4>
+                            <p>Guide: Priya Fernando | Driver: Kamal Dias | Booking: RNW-001235</p>
+                            <div class="availability-status status-onduty">In Progress</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">09:00</div>
+                        <div class="timeline-content">
+                            <h4>Shift Change</h4>
+                            <p>Morning teams return, afternoon preparation begins</p>
+                            <div class="availability-status status-available">Scheduled</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">15:30</div>
+                        <div class="timeline-content">
+                            <h4>Evening Safari Teams</h4>
+                            <p>3 teams deployed for evening safaris</p>
+                            <div class="availability-status status-available">Scheduled</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workload-chart">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem;">Current Staff Workload</h3>
+
+                    <div class="workload-bar">
+                        <div class="staff-name">Kumara Perera</div>
+                        <div class="workload-progress">
+                            <div class="workload-fill workload-high" style="width: 85%;"></div>
+                        </div>
+                        <div class="workload-percentage">85%</div>
+                    </div>
+
+                    <div class="workload-bar">
+                        <div class="staff-name">Nimal Silva</div>
+                        <div class="workload-progress">
+                            <div class="workload-fill workload-medium" style="width: 65%;"></div>
+                        </div>
+                        <div class="workload-percentage">65%</div>
+                    </div>
+
+                    <div class="workload-bar">
+                        <div class="staff-name">Priya Fernando</div>
+                        <div class="workload-progress">
+                            <div class="workload-fill workload-high" style="width: 78%;"></div>
+                        </div>
+                        <div class="workload-percentage">78%</div>
+                    </div>
+
+                    <div class="workload-bar">
+                        <div class="staff-name">Kamal Dias</div>
+                        <div class="workload-progress">
+                            <div class="workload-fill workload-low" style="width: 45%;"></div>
+                        </div>
+                        <div class="workload-percentage">45%</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Staff Assignments Section -->
+            <section class="content-section" id="assignments">
+                <div class="section-header">
+                    <h2>Staff Assignments Management</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="optimizeAssignments()">Optimize</button>
+                        <button class="btn btn-primary" onclick="createAssignment()">New Assignment</button>
+                    </div>
+                </div>
+
+                <div class="filter-buttons" style="margin-bottom: 2rem;">
+                    <button class="filter-btn active" data-filter="all">All Assignments</button>
+                    <button class="filter-btn" data-filter="today">Today</button>
+                    <button class="filter-btn" data-filter="tomorrow">Tomorrow</button>
+                    <button class="filter-btn" data-filter="week">This Week</button>
+                    <button class="filter-btn" data-filter="unassigned">Unassigned</button>
+                </div>
+
+                <div id="staffAssignments">
+                    <!-- Staff assignments will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Crew Management Section -->
+            <section class="content-section" id="crew">
+                <div class="section-header">
+                    <h2>Crew Management</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="exportStaffReport()">Export Report</button>
+                        <button class="btn btn-primary" onclick="addStaffMember()">Add Staff</button>
+                    </div>
+                </div>
+
+                <div class="filter-buttons" style="margin-bottom: 2rem;">
+                    <button class="filter-btn active" data-filter="all">All Staff</button>
+                    <button class="filter-btn" data-filter="guides">Guides</button>
+                    <button class="filter-btn" data-filter="drivers">Drivers</button>
+                    <button class="filter-btn" data-filter="available">Available</button>
+                    <button class="filter-btn" data-filter="onduty">On Duty</button>
+                </div>
+
+                <div id="crewList">
+                    <!-- Crew list will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Shift Scheduling Section -->
+            <section class="content-section" id="scheduling">
+                <div class="section-header">
+                    <h2>Shift Scheduling</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="previousWeek()">← Previous Week</button>
+                        <span style="margin: 0 1rem; font-weight: 600;">Week of Jan 13-19, 2025</span>
+                        <button class="btn btn-outline" onclick="nextWeek()">Next Week →</button>
+                    </div>
+                </div>
+
+                <div class="shift-planner">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem;">Weekly Shift Planner</h3>
+
+                    <div class="shift-grid">
+                        <div class="shift-header">Staff</div>
+                        <div class="shift-header">Mon</div>
+                        <div class="shift-header">Tue</div>
+                        <div class="shift-header">Wed</div>
+                        <div class="shift-header">Thu</div>
+                        <div class="shift-header">Fri</div>
+                        <div class="shift-header">Sat</div>
+                        <div class="shift-header">Sun</div>
+
+                        <!-- Kumara Perera Row -->
+                        <div class="shift-cell" style="background: #f8f9fa; font-weight: 600;">Kumara P.</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('kumara', 'mon')">AM</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('kumara', 'tue')">PM</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('kumara', 'wed')">AM</div>
+                        <div class="shift-cell" onclick="editShift('kumara', 'thu')">-</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('kumara', 'fri')">FULL</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('kumara', 'sat')">AM</div>
+                        <div class="shift-cell" onclick="editShift('kumara', 'sun')">-</div>
+
+                        <!-- Nimal Silva Row -->
+                        <div class="shift-cell" style="background: #f8f9fa; font-weight: 600;">Nimal S.</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('nimal', 'mon')">AM</div>
+                        <div class="shift-cell" onclick="editShift('nimal', 'tue')">-</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('nimal', 'wed')">PM</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('nimal', 'thu')">AM</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('nimal', 'fri')">PM</div>
+                        <div class="shift-cell" onclick="editShift('nimal', 'sat')">-</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('nimal', 'sun')">AM</div>
+
+                        <!-- Priya Fernando Row -->
+                        <div class="shift-cell" style="background: #f8f9fa; font-weight: 600;">Priya F.</div>
+                        <div class="shift-cell" onclick="editShift('priya', 'mon')">-</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('priya', 'tue')">AM</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('priya', 'wed')">AM</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('priya', 'thu')">PM</div>
+                        <div class="shift-cell" onclick="editShift('priya', 'fri')">-</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('priya', 'sat')">FULL</div>
+                        <div class="shift-cell shift-assigned" onclick="editShift('priya', 'sun')">PM</div>
+                    </div>
+
+                    <div style="display: flex; gap: 2rem; margin-top: 2rem; justify-content: center; font-size: 0.9rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 15px; height: 15px; background: #e8f5e9; border-radius: 3px;"></div>
+                            <span>Assigned</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 15px; height: 15px; background: #fff3cd; border-radius: 3px;"></div>
+                            <span>Available</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 15px; height: 15px; background: #f8d7da; border-radius: 3px;"></div>
+                            <span>Unavailable</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-assignment">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem;">Quick Assignment</h3>
+                    <form class="assignment-form">
+                        <div class="form-group">
+                            <label class="form-label">Select Booking</label>
+                            <select class="form-control" id="quickBooking">
+                                <option value="">Choose booking</option>
+                                <option value="RNW-001234">RNW-001234 - Morning Safari</option>
+                                <option value="RNW-001235">RNW-001235 - Evening Safari</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Assign Guide</label>
+                            <select class="form-control" id="quickGuide">
+                                <option value="">Choose guide</option>
+                                <option value="kumara">Kumara Perera (Available)</option>
+                                <option value="priya">Priya Fernando (Available)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Assign Driver</label>
+                            <select class="form-control" id="quickDriver">
+                                <option value="">Choose driver</option>
+                                <option value="nimal">Nimal Silva (Available)</option>
+                                <option value="kamal">Kamal Dias (Available)</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; align-items: end;">
+                            <button type="button" class="btn btn-primary" onclick="quickAssign()">Assign Team</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Staff Assignments Section -->
+            <section class="content-section" id="assignments">
+                <div class="section-header">
+                    <h2>Current Staff Assignments</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="reassignStaff()">Bulk Reassign</button>
+                        <button class="btn btn-primary" onclick="createNewAssignment()">New Assignment</button>
+                    </div>
+                </div>
+
+                <div id="currentAssignments">
+                    <!-- Current assignments will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Crew Management Section -->
+            <section class="content-section" id="crew">
+                <div class="section-header">
+                    <h2>Team Members</h2>
+                    <div class="search-filter">
+                        <input type="text" class="search-input" placeholder="Search staff..." id="staffSearch">
+                        <select class="filter-select" id="roleFilter">
+                            <option value="">All Roles</option>
+                            <option value="guide">Tour Guides</option>
+                            <option value="driver">Drivers</option>
+                            <option value="support">Support Staff</option>
+                        </select>
+                        <select class="filter-select" id="availabilityFilter">
+                            <option value="">All Status</option>
+                            <option value="available">Available</option>
+                            <option value="onduty">On Duty</option>
+                            <option value="leave">On Leave</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="teamMembers">
+                    <!-- Team members will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Team Performance Section -->
+            <section class="content-section" id="performance">
+                <div class="section-header">
+                    <h2>Team Performance Analytics</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="generatePerformanceReport()">Generate Report</button>
+                        <button class="btn btn-primary" onclick="scheduleReview()">Schedule Review</button>
+                    </div>
+                </div>
+
+                <div class="performance-overview">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem;">Performance Metrics</h3>
+
+                    <div class="performance-grid">
+                        <div class="performance-metric">
+                            <div class="metric-value">4.8</div>
+                            <div>Guides Avg Rating</div>
+                        </div>
+                        <div class="performance-metric">
+                            <div class="metric-value">4.6</div>
+                            <div>Drivers Avg Rating</div>
+                        </div>
+                        <div class="performance-metric">
+                            <div class="metric-value">94%</div>
+                            <div>On-Time Performance</div>
+                        </div>
+                        <div class="performance-metric">
+                            <div class="metric-value">98%</div>
+                            <div>Attendance Rate</div>
+                        </div>
+                        <div class="performance-metric">
+                            <div class="metric-value">156</div>
+                            <div>Safaris This Month</div>
+                        </div>
+                        <div class="performance-metric">
+                            <div class="metric-value">87%</div>
+                            <div>Customer Satisfaction</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="performanceDetails">
+                    <!-- Detailed performance data will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Training Section -->
+            <section class="content-section" id="training">
+                <div class="section-header">
+                    <h2>Training & Development</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="scheduleTraining()">Schedule Training</button>
+                        <button class="btn btn-primary" onclick="createTrainingProgram()">New Program</button>
+                    </div>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card">
+                        <span class="card-icon">🎓</span>
+                        <h3>Wildlife Identification</h3>
+                        <p>Advanced training for guides on wildlife species identification and behavior.</p>
+                        <div style="margin-top: 1rem;">
+                            <div class="status-badge status-confirmed">Active</div>
+                            <p style="margin-top: 0.5rem; font-size: 0.9rem;">Next session: Jan 20, 2025</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <span class="card-icon">🚗</span>
+                        <h3>Advanced Driving Skills</h3>
+                        <p>Specialized training for safari vehicle operation in challenging terrain.</p>
+                        <div style="margin-top: 1rem;">
+                            <div class="status-badge status-pending">Scheduled</div>
+                            <p style="margin-top: 0.5rem; font-size: 0.9rem;">Next session: Jan 25, 2025</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <span class="card-icon">🗣️</span>
+                        <h3>Customer Service Excellence</h3>
+                        <p>Communication and customer service skills for all staff members.</p>
+                        <div style="margin-top: 1rem;">
+                            <div class="status-badge status-confirmed">Ongoing</div>
+                            <p style="margin-top: 0.5rem; font-size: 0.9rem;">Monthly workshops</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <span class="card-icon">🏥</span>
+                        <h3>First Aid Certification</h3>
+                        <p>Mandatory first aid and emergency response training for all field staff.</p>
+                        <div style="margin-top: 1rem;">
+                            <div class="status-badge status-pending">Due</div>
+                            <p style="margin-top: 0.5rem; font-size: 0.9rem;">Annual renewal required</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section class="content-section" id="reports">
+                <div class="section-header">
+                    <h2>Team Reports & Analytics</h2>
+                    <div>
+                        <button class="btn btn-outline" onclick="customReport()">Custom Report</button>
+                        <button class="btn btn-primary" onclick="exportAllReports()">Export All</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-number">156</div>
+                        <div class="stat-label">Safaris This Month</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">⏰</div>
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">On-Time Rate</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-number">15%</div>
+                        <div class="stat-label">Productivity Increase</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-number">$2,340</div>
+                        <div class="stat-label">Avg Revenue per Safari</div>
+                    </div>
+                </div>
+
+                <div class="chart-container" style="background: white; border-radius: 15px; padding: 2rem; box-shadow: var(--shadow); margin: 2rem 0;">
+                    <h3>Team Performance Trends</h3>
+                    <div style="height: 300px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-light); margin-top: 1rem;">
+                        📊 Team performance analytics chart placeholder
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            if (!SafariApp.Auth.isAuthenticated() || SafariApp.Auth.getUserRole() !== 'TOUR_CREW_MANAGER') {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Initialize dashboard
+            loadCurrentAssignments();
+            loadTeamMembers();
+            loadPerformanceData();
+
+            // Menu navigation
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    showSection(section);
+
+                    document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+
+        function loadCurrentAssignments() {
+            // Mock assignment data
+            const assignments = [
+                {
+                    id: 'ASS-001',
+                    bookingId: 'RNW-2025-001234',
+                    package: 'Morning Safari',
+                    date: '2025-01-15',
+                    time: '06:00',
+                    guide: 'Kumara Perera',
+                    driver: 'Nimal Silva',
+                    vehicle: 'LB-1234',
+                    status: 'confirmed',
+                    customers: 2
+                },
+                {
+                    id: 'ASS-002',
+                    bookingId: 'RNW-2025-001235',
+                    package: 'Evening Safari',
+                    date: '2025-01-15',
+                    time: '15:30',
+                    guide: 'Priya Fernando',
+                    driver: 'Kamal Dias',
+                    vehicle: 'LB-5678',
+                    status: 'confirmed',
+                    customers: 4
+                }
+            ];
+
+            document.getElementById('currentAssignments').innerHTML = assignments.map(assignment => `
+                <div class="assignment-card">
+                    <div class="assignment-header">
+                        <div>
+                            <h4 style="color: #20c997; margin-bottom: 0.5rem;">${assignment.package}</h4>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">Assignment: ${assignment.id} • Booking: ${assignment.bookingId}</p>
+                        </div>
+                        <div class="availability-status status-${assignment.status}">${assignment.status.toUpperCase()}</div>
+                    </div>
+
+                    <div class="assignment-details">
+                        <div class="detail-item">
+                            <span class="detail-icon">📅</span>
+                            <span>${SafariApp.formatDate(assignment.date)} at ${assignment.time}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">🧭</span>
+                            <span>Guide: ${assignment.guide}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">🚗</span>
+                            <span>Driver: ${assignment.driver}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">🚙</span>
+                            <span>Vehicle: ${assignment.vehicle}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">👥</span>
+                            <span>${assignment.customers} customers</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button class="btn btn-primary btn-sm" onclick="editAssignment('${assignment.id}')">Edit</button>
+                        <button class="btn btn-outline btn-sm" onclick="reassignStaff('${assignment.id}')">Reassign</button>
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="viewAssignmentDetails('${assignment.id}')">Details</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadTeamMembers() {
+            // Mock team member data
+            const teamMembers = [
+                {
+                    id: 'STF-001',
+                    name: 'Kumara Perera',
+                    role: 'GUIDE',
+                    experience: '8 years',
+                    rating: 4.8,
+                    status: 'available',
+                    todaysAssignments: 2,
+                    weeklyHours: 35,
+                    lastAssignment: '2025-01-14'
+                },
+                {
+                    id: 'STF-002',
+                    name: 'Nimal Silva',
+                    role: 'DRIVER',
+                    experience: '5 years',
+                    rating: 4.6,
+                    status: 'onduty',
+                    todaysAssignments: 2,
+                    weeklyHours: 40,
+                    lastAssignment: '2025-01-15'
+                },
+                {
+                    id: 'STF-003',
+                    name: 'Priya Fernando',
+                    role: 'GUIDE',
+                    experience: '12 years',
+                    rating: 4.9,
+                    status: 'available',
+                    todaysAssignments: 1,
+                    weeklyHours: 28,
+                    lastAssignment: '2025-01-13'
+                }
+            ];
+
+            document.getElementById('teamMembers').innerHTML = teamMembers.map(member => `
+                <div class="staff-card">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="staff-avatar">${member.name.charAt(0)}</div>
+                        <div class="staff-info">
+                            <h4 style="color: #20c997; margin-bottom: 0.25rem;">${member.name}</h4>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">${member.role} • ${member.experience} experience</p>
+                        </div>
+                        <div class="availability-status status-${member.status}">${member.status.replace('onduty', 'on duty').toUpperCase()}</div>
+                    </div>
+
+                    <div class="staff-stats">
+                        <div class="staff-stat">
+                            <div class="stat-value">${member.rating}</div>
+                            <div class="stat-label">Rating</div>
+                        </div>
+                        <div class="staff-stat">
+                            <div class="stat-value">${member.todaysAssignments}</div>
+                            <div class="stat-label">Today</div>
+                        </div>
+                        <div class="staff-stat">
+                            <div class="stat-value">${member.weeklyHours}</div>
+                            <div class="stat-label">Week Hours</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button class="btn btn-primary btn-sm" onclick="assignToSafari('${member.id}')">Assign Safari</button>
+                        <button class="btn btn-outline btn-sm" onclick="viewSchedule('${member.id}')">Schedule</button>
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="viewPerformance('${member.id}')">Performance</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadPerformanceData() {
+            // Mock performance data with individual ratings
+            const performanceData = [
+                {
+                    staffId: 'STF-001',
+                    name: 'Kumara Perera',
+                    role: 'Guide',
+                    monthlyRating: 4.8,
+                    safaris: 23,
+                    customerFeedback: [
+                        { rating: 5, comment: 'Excellent guide, very knowledgeable' },
+                        { rating: 5, comment: 'Amazing wildlife spotting skills' },
+                        { rating: 4, comment: 'Good experience, could improve English' }
+                    ],
+                    improvementAreas: ['Language skills', 'Photography assistance']
+                },
+                {
+                    staffId: 'STF-002',
+                    name: 'Nimal Silva',
+                    role: 'Driver',
+                    monthlyRating: 4.6,
+                    safaris: 28,
+                    customerFeedback: [
+                        { rating: 5, comment: 'Excellent driving, felt very safe' },
+                        { rating: 4, comment: 'Good vehicle positioning for photos' },
+                        { rating: 4, comment: 'Professional and courteous' }
+                    ],
+                    improvementAreas: ['Route optimization', 'Vehicle maintenance knowledge']
+                }
+            ];
+
+            document.getElementById('performanceDetails').innerHTML = performanceData.map(staff => `
+                <div class="staff-card">
+                    <div class="staff-header">
+                        <h4 style="color: #20c997;">${staff.name} - ${staff.role}</h4>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div class="rating-display">
+                                <div class="rating-stars">
+                                    ${generateStars(Math.floor(staff.monthlyRating))}
+                                </div>
+                                <span style="font-weight: 600; color: #20c997;">${staff.monthlyRating}/5</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                        <p><strong>Monthly Safaris:</strong> ${staff.safaris}</p>
+                        <p><strong>Recent Feedback:</strong></p>
+                        <ul style="margin: 0.5rem 0; padding-left: 1rem;">
+                            ${staff.customerFeedback.map(feedback => `
+                                <li>"${feedback.comment}" - ${feedback.rating}/5 stars</li>
+                            `).join('')}
+                        </ul>
+                        <p><strong>Improvement Areas:</strong> ${staff.improvementAreas.join(', ')}</p>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-primary btn-sm" onclick="scheduleReview('${staff.staffId}')">Schedule Review</button>
+                        <button class="btn btn-outline btn-sm" onclick="assignTraining('${staff.staffId}')">Assign Training</button>
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="viewDetailedFeedback('${staff.staffId}')">View Feedback</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function generateStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += `<span class="rating-star">${i <= rating ? '★' : '☆'}</span>`;
+            }
+            return stars;
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function logout() {
+            SafariApp.Auth.logout();
+        }
+
+        // Manager functions
+        function quickAssign() {
+            const booking = document.getElementById('quickBooking').value;
+            const guide = document.getElementById('quickGuide').value;
+            const driver = document.getElementById('quickDriver').value;
+
+            if (!booking || !guide || !driver) {
+                SafariApp.Notifications.error('Please select booking, guide, and driver');
+                return;
+            }
+
+            SafariApp.Notifications.success(`Team assigned to booking ${booking}!`);
+            loadCurrentAssignments();
+        }
+
+        function autoAssignStaff() {
+            SafariApp.Notifications.success('Auto-assigning available staff to unassigned bookings...');
+        }
+
+        function editShift(staff, day) {
+            SafariApp.Notifications.info(`Editing shift for ${staff} on ${day} - Feature coming soon!`);
+        }
+
+        function editAssignment(id) {
+            SafariApp.Notifications.info(`Editing assignment ${id} - Feature coming soon!`);
+        }
+
+        function reassignStaff(id) {
+            SafariApp.Notifications.info(`Reassigning staff for ${id} - Feature coming soon!`);
+        }
+
+        function assignToSafari(staffId) {
+            SafariApp.Notifications.info(`Assigning staff ${staffId} to safari - Feature coming soon!`);
+        }
+
+        function viewPerformance(staffId) {
+            SafariApp.Notifications.info(`Viewing performance for staff ${staffId} - Feature coming soon!`);
+        }
+
+        function scheduleReview(staffId) {
+            SafariApp.Notifications.info(`Scheduling review for staff ${staffId} - Feature coming soon!`);
+        }
+
+        function viewDetailedFeedback(staffId) {
+            SafariApp.Notifications.info(`Viewing detailed feedback for staff ${staffId} - Feature coming soon!`);
+        }
+
+        function scheduleTraining() {
+            SafariApp.Notifications.info('Scheduling training session - Feature coming soon!');
+        }
+
+        function createTrainingProgram() {
+            SafariApp.Notifications.info('Creating training program - Feature coming soon!');
+        }
+
+        function generatePerformanceReport() {
+            SafariApp.Notifications.success('Generating team performance report...');
+        }
+
+        function exportAllReports() {
+            SafariApp.Notifications.success('Exporting all team reports...');
+        }
+    </script>
+</body>
+</html>
+

@@ -10,8 +10,9 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
+    open-in-view: false
     properties:
       hibernate:
         format_sql: true
@@ -53,6 +54,9 @@ app:
   upload:
     path: ${UPLOAD_PATH:./uploads}
     max-file-size: 5MB
+
+server:
+  port: 8080
 
 management:
   endpoints:

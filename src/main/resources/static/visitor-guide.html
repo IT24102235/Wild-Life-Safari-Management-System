@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Guide - Ranweli Safari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .guide-section {
+            padding: 6rem 0 2rem;
+        }
+
+        .guide-hero {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .guide-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .guide-tab {
+            padding: 1rem 2rem;
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .guide-tab.active,
+        .guide-tab:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .guide-content {
+            display: none;
+        }
+
+        .guide-content.active {
+            display: block;
+        }
+
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .rule-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+
+        .rule-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .rule-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .rule-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .rule-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .rule-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .rule-card li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .rule-card li:last-child {
+            border-bottom: none;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .info-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .timing-table {
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
+        }
+
+        .timing-table th,
+        .timing-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .timing-table th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .timing-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .timing-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .emergency-info {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 5px solid #e91e63;
+        }
+
+        .emergency-info h3 {
+            color: #c2185b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .contact-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .contact-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .preparation-checklist {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .weather-info {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8ff 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 5px solid var(--secondary-color);
+        }
+
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .weather-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .season-emoji {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">Ranweli Safari</a>
+
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="visitor-guide.html" class="active">Visitor Guide</a></li>
+                <li><a href="what-to-do.html">What To Do</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="signup.html" class="btn btn-primary">Book Safari</a>
+            </div>
+
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="guide-hero">
+        <div class="container">
+            <h1 class="fade-in">Visitor Guide</h1>
+            <p class="fade-in" style="font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
+                Everything you need to know for an amazing and safe safari experience at Ranweli National Park
+            </p>
+        </div>
+    </section>
+
+    <!-- Guide Section -->
+    <section class="guide-section">
+        <div class="container">
+            <!-- Guide Tabs -->
+            <div class="guide-tabs fade-in">
+                <button class="guide-tab active" data-tab="rules">Park Rules</button>
+                <button class="guide-tab" data-tab="preparation">Preparation</button>
+                <button class="guide-tab" data-tab="timing">Timing & Seasons</button>
+                <button class="guide-tab" data-tab="safety">Safety Guidelines</button>
+                <button class="guide-tab" data-tab="emergency">Emergency Info</button>
+            </div>
+
+            <!-- Park Rules Content -->
+            <div class="guide-content active" id="rules">
+                <div class="section-header">
+                    <h2 class="section-title">Park Rules & Regulations</h2>
+                    <p class="section-subtitle">Please follow these essential rules to ensure wildlife safety and your enjoyable experience</p>
+                </div>
+
+                <div class="rules-grid">
+                    <div class="rule-card fade-in">
+                        <span class="rule-icon">🚗</span>
+                        <h3>Vehicle Guidelines</h3>
+                        <ul>
+                            <li>Stay inside the vehicle at all times</li>
+                            <li>Do not stand up or lean out of windows</li>
+                            <li>Keep noise levels to minimum</li>
+                            <li>Follow designated tracks only</li>
+                            <li>Maintain 25m distance from elephants</li>
+                            <li>No honking or loud music</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-card fade-in">
+                        <span class="rule-icon">📸</span>
+                        <h3>Photography Rules</h3>
+                        <ul>
+                            <li>No flash photography</li>
+                            <li>Do not use drones</li>
+                            <li>Respect animal behavior</li>
+                            <li>No baiting animals for photos</li>
+                            <li>Silent camera mode preferred</li>
+                            <li>Commercial filming requires permits</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-card fade-in">
+                        <span class="rule-icon">🌿</span>
+                        <h3>Environmental Protection</h3>
+                        <ul>
+                            <li>No littering - carry out all waste</li>
+                            <li>Do not pick plants or flowers</li>
+                            <li>No feeding wild animals</li>
+                            <li>Stay on marked trails</li>
+                            <li>Respect nesting areas</li>
+                            <li>No collecting of natural specimens</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-card fade-in">
+                        <span class="rule-icon">👥</span>
+                        <h3>Visitor Conduct</h3>
+                        <ul>
+                            <li>Follow guide instructions</li>
+                            <li>No smoking in the park</li>
+                            <li>No alcohol consumption</li>
+                            <li>Dress appropriately</li>
+                            <li>Respect other visitors</li>
+                            <li>Report any violations</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-box fade-in">
+                    <h3>🚨 Important Notice</h3>
+                    <p>Violation of park rules may result in immediate expulsion from the park and legal action. These rules are in place to protect both wildlife and visitors. Our guides are authorized to enforce all regulations.</p>
+                </div>
+            </div>
+
+            <!-- Preparation Content -->
+            <div class="guide-content" id="preparation">
+                <div class="section-header">
+                    <h2 class="section-title">Safari Preparation</h2>
+                    <p class="section-subtitle">Get ready for your adventure with our comprehensive preparation guide</p>
+                </div>
+
+                <div class="preparation-checklist fade-in">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1.5rem;">Essential Items Checklist</h3>
+
+                    <div class="checklist-item">
+                        <div class="checklist-icon">👕</div>
+                        <div>
+                            <h4>Clothing</h4>
+                            <p>Light-colored, long-sleeved shirts and pants. Comfortable closed shoes. Hat and sunglasses. Light jacket for early morning safaris.</p>
+                        </div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="checklist-icon">📱</div>
+                        <div>
+                            <h4>Electronics</h4>
+                            <p>Camera with extra batteries and memory cards. Binoculars for better wildlife viewing. Power bank for device charging. Waterproof bags for protection.</p>
+                        </div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="checklist-icon">🧴</div>
+                        <div>
+                            <h4>Personal Care</h4>
+                            <p>High SPF sunscreen. Insect repellent. Personal medications. Hand sanitizer. Wet wipes for cleaning.</p>
+                        </div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="checklist-icon">💧</div>
+                        <div>
+                            <h4>Food & Water</h4>
+                            <p>Plenty of water (2-3 liters per person). Light snacks and energy bars. Avoid strong-smelling foods. Reusable water bottles encouraged.</p>
+                        </div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="checklist-icon">📋</div>
+                        <div>
+                            <h4>Documents</h4>
+                            <p>Valid ID or passport. Safari booking confirmation. Travel insurance documents. Emergency contact information.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="weather-info fade-in">
+                    <h3>🌤️ What to Expect Weather-wise</h3>
+                    <div class="weather-grid">
+                        <div class="weather-card">
+                            <span class="season-emoji">☀️</span>
+                            <h4>Dry Season (May - Sep)</h4>
+                            <p>Best for wildlife viewing. Hot and dry. Perfect visibility. Animals gather near water sources.</p>
+                        </div>
+                        <div class="weather-card">
+                            <span class="season-emoji">🌧️</span>
+                            <h4>Wet Season (Oct - Jan)</h4>
+                            <p>Lush greenery. Afternoon showers. Fewer crowds. Birds are most active.</p>
+                        </div>
+                        <div class="weather-card">
+                            <span class="season-emoji">🌸</span>
+                            <h4>Inter-monsoon (Feb - Apr)</h4>
+                            <p>Mild weather. Flowering season. Comfortable temperatures. Good for photography.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timing & Seasons Content -->
+            <div class="guide-content" id="timing">
+                <div class="section-header">
+                    <h2 class="section-title">Safari Timing & Best Seasons</h2>
+                    <p class="section-subtitle">Plan your visit for the ultimate wildlife experience</p>
+                </div>
+
+                <table class="timing-table fade-in">
+                    <thead>
+                        <tr>
+                            <th>Safari Time</th>
+                            <th>Duration</th>
+                            <th>Best For</th>
+                            <th>Wildlife Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Early Morning</strong><br>6:00 AM - 9:00 AM</td>
+                            <td>3 hours</td>
+                            <td>Bird watching, Cool weather</td>
+                            <td>High - Animals are most active</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Late Morning</strong><br>9:00 AM - 12:00 PM</td>
+                            <td>3 hours</td>
+                            <td>Photography, Elephant viewing</td>
+                            <td>Medium - Animals move to shade</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Afternoon</strong><br>2:00 PM - 5:00 PM</td>
+                            <td>3 hours</td>
+                            <td>Leopard spotting, General wildlife</td>
+                            <td>Medium - Post-rest activity</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Evening</strong><br>3:30 PM - 6:30 PM</td>
+                            <td>3 hours</td>
+                            <td>Sunset views, Predator activity</td>
+                            <td>High - Animals come out to feed</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Full Day</strong><br>6:00 AM - 6:00 PM</td>
+                            <td>12 hours</td>
+                            <td>Complete experience, All wildlife</td>
+                            <td>Varied - Multiple activity periods</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="info-box fade-in">
+                    <h3>🕒 Best Times for Wildlife Sightings</h3>
+                    <p><strong>Leopards:</strong> Late afternoon and evening safaris offer the best chances.<br>
+                    <strong>Elephants:</strong> Early morning near water sources and throughout the day.<br>
+                    <strong>Birds:</strong> Early morning is prime time for bird watching and photography.<br>
+                    <strong>Sloth Bears:</strong> Early morning and late afternoon during fruiting seasons.</p>
+                </div>
+            </div>
+
+            <!-- Safety Guidelines Content -->
+            <div class="guide-content" id="safety">
+                <div class="section-header">
+                    <h2 class="section-title">Safety Guidelines</h2>
+                    <p class="section-subtitle">Your safety is our top priority - follow these important guidelines</p>
+                </div>
+
+                <div class="rules-grid">
+                    <div class="rule-card fade-in">
+                        <span class="rule-icon">🐘</span>
+                        <h3>Elephant Encounters</h3>
+                        <ul>
+                            <li>Never approach closer than 25 meters</li>
+                            <li>Watch for warning signs: ear flapping, trumpeting</li>
+                            <li>If charged, reverse slowly and calmly</li>
+                            <li>Never get between mother and calf</li>
+                            <li>Respect their right of way</li>
+                            <li>Turn off engine if instructed</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-card fade-in">
+                        <span class="rule-icon">🐆</span>
+                        <h3>Predator Safety</h3>
+                        <ul>
+                            <li>Remain calm and seated at all times</li>
+                            <li>No sudden movements or loud noises</li>
+                            <li>Do not attempt to attract attention</li>
+                            <li>Follow guide's instructions immediately</li>
+                            <li>Keep cameras ready but be patient</li>
+                            <li>Respect their space and behavior</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-card fade-in">
+                        <span class="rule-icon">☀️</span>
+                        <h3>Sun & Heat Protection</h3>
+                        <ul>
+                            <li>Apply sunscreen regularly</li>
+                            <li>Stay hydrated throughout the safari</li>
+                            <li>Wear protective clothing</li>
+                            <li>Take breaks in shade when possible</li>
+                            <li>Recognize heat exhaustion symptoms</li>
+                            <li>Inform guide if feeling unwell</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-card fade-in">
+                        <span class="rule-icon">🦟</span>
+                        <h3>Insect Protection</h3>
+                        <ul>
+                            <li>Use effective insect repellent</li>
+                            <li>Wear long sleeves during dawn/dusk</li>
+                            <li>Avoid perfumes and bright colors</li>
+                            <li>Check for ticks after safari</li>
+                            <li>Keep vehicle windows closed when advised</li>
+                            <li>Bring antihistamines for allergies</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-box fade-in">
+                    <h3>⚠️ Medical Considerations</h3>
+                    <p>Inform your guide of any medical conditions, allergies, or medications. Carry a basic first aid kit. If you have mobility issues, please discuss accessibility options when booking. Our guides are trained in basic first aid.</p>
+                </div>
+            </div>
+
+            <!-- Emergency Info Content -->
+            <div class="guide-content" id="emergency">
+                <div class="section-header">
+                    <h2 class="section-title">Emergency Information</h2>
+                    <p class="section-subtitle">Important contacts and procedures for emergency situations</p>
+                </div>
+
+                <div class="emergency-info fade-in">
+                    <h3>🚨 Emergency Contacts</h3>
+                    <div class="contact-grid">
+                        <div class="contact-card">
+                            <h4>Park Emergency</h4>
+                            <p><strong>📞 +94 77 911 0000</strong></p>
+                            <p>24/7 Park Emergency Line</p>
+                        </div>
+                        <div class="contact-card">
+                            <h4>Medical Emergency</h4>
+                            <p><strong>📞 1990</strong></p>
+                            <p>National Emergency Medical Service</p>
+                        </div>
+                        <div class="contact-card">
+                            <h4>Wildlife Department</h4>
+                            <p><strong>📞 +94 11 2888 585</strong></p>
+                            <p>Department of Wildlife Conservation</p>
+                        </div>
+                        <div class="contact-card">
+                            <h4>Ranweli Safari Office</h4>
+                            <p><strong>📞 +94 77 123 4567</strong></p>
+                            <p>Our 24/7 Support Line</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rules-grid">
+                    <div class="rule-card fade-in">
+                        <span class="rule-icon">🚑</span>
+                        <h3>Medical Emergency Procedure</h3>
+                        <ul>
+                            <li>Immediately inform your safari guide</li>
+                            <li>Call emergency medical services (1990)</li>
+                            <li>Provide exact location coordinates</li>
+                            <li>Stay calm and follow first aid protocols</li>
+                            <li>Evacuate to nearest medical facility</li>
+                            <li>Contact your travel insurance provider</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-card fade-in">
+                        <span class="rule-icon">🐘</span>
+                        <h3>Wildlife Emergency</h3>
+                        <ul>
+                            <li>Follow guide's instructions immediately</li>
+                            <li>Remain in vehicle unless instructed otherwise</li>
+                            <li>Do not panic or make sudden movements</li>
+                            <li>Allow guide to manage the situation</li>
+                            <li>Report incidents to park authorities</li>
+                            <li>Document for insurance if applicable</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-card fade-in">
+                        <span class="rule-icon">🚗</span>
+                        <h3>Vehicle Breakdown</h3>
+                        <ul>
+                            <li>Stay inside the vehicle</li>
+                            <li>Guide will radio for assistance</li>
+                            <li>Backup vehicle will be dispatched</li>
+                            <li>Remain calm and patient</li>
+                            <li>Do not attempt to exit vehicle</li>
+                            <li>Follow safety protocols while waiting</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-card fade-in">
+                        <span class="rule-icon">🌧️</span>
+                        <h3>Weather Emergency</h3>
+                        <ul>
+                            <li>Guide will monitor weather conditions</li>
+                            <li>Safari may be suspended for safety</li>
+                            <li>Seek shelter in designated areas</li>
+                            <li>Follow evacuation procedures if needed</li>
+                            <li>Refunds available for cancelled safaris</li>
+                            <li>Safety takes priority over wildlife viewing</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-box fade-in">
+                    <h3>📍 Nearest Medical Facilities</h3>
+                    <p><strong>Tissamaharama Hospital:</strong> 15 km from park entrance<br>
+                    <strong>Hambantota General Hospital:</strong> 45 km from park entrance<br>
+                    <strong>Private Clinic - Ranweli Medical Center:</strong> 8 km from park entrance<br><br>
+                    All our safari vehicles are equipped with first aid kits and emergency communication devices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: var(--primary-color); color: white; padding: 3rem 0 1rem;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                <div>
+                    <h3 style="margin-bottom: 1rem;">Ranweli Safari</h3>
+                    <p>Experience the wild beauty of Sri Lanka's premier national park with expert guides and premium service.</p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Quick Links</h4>
+                    <ul style="list-style: none;">
+                        <li><a href="/" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Home</a></li>
+                        <li><a href="gallery.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Gallery</a></li>
+                        <li><a href="what-to-do.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">What To Do</a></li>
+                        <li><a href="contact.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Contact Info</h4>
+                    <p>📧 info@ranwelisafari.com</p>
+                    <p>📞 +94 77 123 4567</p>
+                    <p>📍 Ranweli National Park, Sri Lanka</p>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                <p>&copy; 2025 Ranweli Safari Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Tab functionality for visitor guide
+        document.addEventListener('DOMContentLoaded', function() {
+            const guideTabs = document.querySelectorAll('.guide-tab');
+            const guideContents = document.querySelectorAll('.guide-content');
+
+            guideTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetTab = tab.dataset.tab;
+
+                    // Remove active class from all tabs and contents
+                    guideTabs.forEach(t => t.classList.remove('active'));
+                    guideContents.forEach(c => c.classList.remove('active'));
+
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

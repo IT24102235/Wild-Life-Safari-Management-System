@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Ranweli Safari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .admin-badge {
+            background: #ffd700;
+            color: #333;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: #f8f9fa;
+            border-left-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .menu-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .admin-header {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .data-table {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            width: 250px;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        .feedback-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .feedback-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .rating-display {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 0.2rem;
+        }
+
+        .rating-star {
+            color: #ffd700;
+            font-size: 1.2rem;
+        }
+
+        .rating-number {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .feedback-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .user-management {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .assignment-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .quick-actions {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🦁 Ranweli Admin</h2>
+                <div class="admin-badge">ADMINISTRATOR</div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-section="overview">
+                    <span class="menu-icon">📊</span>
+                    Dashboard Overview
+                </a>
+                <a href="#" class="menu-item" data-section="bookings">
+                    <span class="menu-icon">📅</span>
+                    Booking Management
+                </a>
+                <a href="#" class="menu-item" data-section="feedback">
+                    <span class="menu-icon">⭐</span>
+                    Customer Feedback
+                </a>
+                <a href="#" class="menu-item" data-section="users">
+                    <span class="menu-icon">👥</span>
+                    User Management
+                </a>
+                <a href="#" class="menu-item" data-section="staff">
+                    <span class="menu-icon">🧑‍💼</span>
+                    Staff Management
+                </a>
+                <a href="#" class="menu-item" data-section="assignments">
+                    <span class="menu-icon">📋</span>
+                    Safari Assignments
+                </a>
+                <a href="#" class="menu-item" data-section="analytics">
+                    <span class="menu-icon">📈</span>
+                    Analytics & Reports
+                </a>
+                <a href="#" class="menu-item" data-section="settings">
+                    <span class="menu-icon">⚙️</span>
+                    System Settings
+                </a>
+            </nav>
+
+            <div style="padding: 2rem;">
+                <button class="logout-btn" style="background: #dc3545; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; width: 100%;" onclick="logout()">
+                    🚪 Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview Section -->
+            <section class="content-section active" id="overview">
+                <div class="admin-header">
+                    <div>
+                        <h1>Admin Dashboard</h1>
+                        <p>Welcome back, Administrator. Here's what's happening today.</p>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" onclick="showSection('bookings')">Manage Bookings</button>
+                        <button class="btn btn-outline" onclick="showSection('staff')">Assign Staff</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-number" id="totalBookingsToday">12</div>
+                        <div class="stat-label">Today's Bookings</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-number" id="todaysRevenue">$2,450</div>
+                        <div class="stat-label">Today's Revenue</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">🧑‍💼</div>
+                        <div class="stat-number" id="activeStaff">8</div>
+                        <div class="stat-label">Active Staff</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-number" id="avgRating">4.7</div>
+                        <div class="stat-label">Average Rating</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-number" id="totalUsers">156</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">🚗</div>
+                        <div class="stat-number" id="activeSafaris">5</div>
+                        <div class="stat-label">Active Safaris</div>
+                    </div>
+                </div>
+
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <h3>Weekly Booking Trends</h3>
+                        <div style="height: 300px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-light);">
+                            📊 Chart will be rendered here
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <h3>Revenue Analysis</h3>
+                        <div style="height: 300px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-light);">
+                            💹 Chart will be rendered here
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feedback Section -->
+            <section class="content-section" id="feedback">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h2>Customer Feedback & Reviews</h2>
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="Search feedback..." id="feedbackSearch">
+                            <select class="filter-select" id="ratingFilter">
+                                <option value="">All Ratings</option>
+                                <option value="5">5 Stars</option>
+                                <option value="4">4 Stars</option>
+                                <option value="3">3 Stars</option>
+                                <option value="2">2 Stars</option>
+                                <option value="1">1 Star</option>
+                            </select>
+                            <select class="filter-select" id="staffFilter">
+                                <option value="">All Staff</option>
+                                <option value="guide">By Guide</option>
+                                <option value="driver">By Driver</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="feedbackList">
+                        <!-- Feedback items will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Booking Management Section -->
+            <section class="content-section" id="bookings">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h2>Booking Management</h2>
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="Search bookings..." id="bookingSearch">
+                            <select class="filter-select" id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <select class="filter-select" id="dateFilter">
+                                <option value="">All Dates</option>
+                                <option value="today">Today</option>
+                                <option value="tomorrow">Tomorrow</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table">
+                        <table style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Customer</th>
+                                    <th>Package</th>
+                                    <th>Date</th>
+                                    <th>Participants</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookingsTableBody">
+                                <!-- Booking rows will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Staff Management Section -->
+            <section class="content-section" id="staff">
+                <div class="user-management">
+                    <div class="table-header">
+                        <h2>Staff Management</h2>
+                        <button class="btn btn-primary" onclick="openAddStaffModal()">Add New Staff</button>
+                    </div>
+
+                    <div class="dashboard-stats" style="margin-bottom: 2rem;">
+                        <div class="stat-card">
+                            <div class="stat-icon">🧭</div>
+                            <div class="stat-number" id="totalGuides">5</div>
+                            <div class="stat-label">Tour Guides</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">🚗</div>
+                            <div class="stat-number" id="totalDrivers">8</div>
+                            <div class="stat-label">Drivers</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">⭐</div>
+                            <div class="stat-number" id="staffAvgRating">4.6</div>
+                            <div class="stat-label">Staff Avg Rating</div>
+                        </div>
+                    </div>
+
+                    <div id="staffList">
+                        <!-- Staff members will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Management Section -->
+            <section class="content-section" id="users">
+                <div class="user-management">
+                    <div class="table-header">
+                        <h2>User Management</h2>
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="Search users..." id="userSearch">
+                            <select class="filter-select" id="userRoleFilter">
+                                <option value="">All Roles</option>
+                                <option value="tourist">Tourists</option>
+                                <option value="guide">Guides</option>
+                                <option value="driver">Drivers</option>
+                                <option value="admin">Admins</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="usersList">
+                        <!-- Users will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Safari Assignments Section -->
+            <section class="content-section" id="assignments">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h2>Safari Assignments</h2>
+                        <button class="btn btn-primary" onclick="autoAssignStaff()">Auto Assign Available Staff</button>
+                    </div>
+
+                    <div id="assignmentsList">
+                        <!-- Assignments will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section class="content-section" id="analytics">
+                <div class="chart-container">
+                    <h2>Analytics & Reports</h2>
+
+                    <div class="dashboard-stats" style="margin: 2rem 0;">
+                        <div class="stat-card">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-number">89%</div>
+                            <div class="stat-label">Customer Satisfaction</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">🎯</div>
+                            <div class="stat-number">94%</div>
+                            <div class="stat-label">Booking Completion Rate</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">📈</div>
+                            <div class="stat-number">+23%</div>
+                            <div class="stat-label">Monthly Growth</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">🔄</div>
+                            <div class="stat-number">67%</div>
+                            <div class="stat-label">Return Customers</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-grid">
+                        <div class="chart-container">
+                            <h3>Monthly Revenue Trend</h3>
+                            <div style="height: 300px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-light);">
+                                📈 Revenue chart placeholder
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <h3>Package Popularity</h3>
+                            <div style="height: 300px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-light);">
+                                🥧 Pie chart placeholder
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <h3>Staff Performance</h3>
+                            <div style="height: 300px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-light);">
+                                📊 Performance chart placeholder
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <h3>Customer Demographics</h3>
+                            <div style="height: 300px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-light);">
+                                🌍 Demographics chart placeholder
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Assign Staff Modal -->
+    <div class="modal" id="assignStaffModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('assignStaffModal')">&times;</button>
+            <h3>Assign Staff to Safari</h3>
+            <form id="assignStaffForm">
+                <div class="assignment-form">
+                    <div class="form-group">
+                        <label class="form-label">Select Guide</label>
+                        <select class="form-control" id="assignGuide" required>
+                            <option value="">Select a guide</option>
+                            <!-- Guide options will be loaded here -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Select Driver</label>
+                        <select class="form-control" id="assignDriver" required>
+                            <option value="">Select a driver</option>
+                            <!-- Driver options will be loaded here -->
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-control" id="assignmentNotes" placeholder="Any special instructions..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Assign Staff</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication and admin role
+            if (!SafariApp.Auth.isAuthenticated() || SafariApp.Auth.getUserRole() !== 'ADMIN') {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Initialize admin dashboard
+            initAdminDashboard();
+            loadFeedbackData();
+            loadBookingData();
+            loadStaffData();
+            loadUserData();
+
+            // Menu navigation
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    showSection(section);
+
+                    // Update active menu item
+                    document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+
+        function initAdminDashboard() {
+            // Load dashboard statistics
+            loadDashboardStats();
+        }
+
+        function loadDashboardStats() {
+            // Mock data for demonstration
+            const stats = {
+                totalBookingsToday: 12,
+                todaysRevenue: 2450,
+                activeStaff: 8,
+                avgRating: 4.7,
+                totalUsers: 156,
+                activeSafaris: 5
+            };
+
+            Object.keys(stats).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    if (key === 'todaysRevenue') {
+                        element.textContent = `$${stats[key].toLocaleString()}`;
+                    } else {
+                        element.textContent = stats[key];
+                    }
+                }
+            });
+        }
+
+        function loadFeedbackData() {
+            // Mock feedback data
+            const feedbackData = [
+                {
+                    id: 1,
+                    bookingId: 'RNW-2025-001234',
+                    customerName: 'John Smith',
+                    safariRating: 5,
+                    guideRating: 5,
+                    driverRating: 4,
+                    guideName: 'Kumara Perera',
+                    driverName: 'Nimal Silva',
+                    date: '2025-01-15',
+                    feedback: 'Absolutely amazing experience! The guide was very knowledgeable and we saw so many animals. The driver was skilled and made us feel safe throughout the journey.',
+                    highlights: 'Leopard sighting, professional guide, comfortable vehicle'
+                },
+                {
+                    id: 2,
+                    bookingId: 'RNW-2025-001235',
+                    customerName: 'Emma Johnson',
+                    safariRating: 4,
+                    guideRating: 5,
+                    driverRating: 4,
+                    guideName: 'Priya Fernando',
+                    driverName: 'Kamal Dias',
+                    date: '2025-01-12',
+                    feedback: 'Great safari experience. Guide was excellent and very passionate about wildlife. Driver was good but vehicle could be better maintained.',
+                    highlights: 'Elephant herd, bird watching, sunset views'
+                },
+                {
+                    id: 3,
+                    bookingId: 'RNW-2025-001236',
+                    customerName: 'Michael Chen',
+                    safariRating: 5,
+                    guideRating: 4,
+                    driverRating: 5,
+                    guideName: 'Rajith Kumar',
+                    driverName: 'Sunil Bandara',
+                    date: '2025-01-10',
+                    feedback: 'Perfect photography safari! Driver knew exactly where to position for the best shots. Guide could improve English communication but was knowledgeable.',
+                    highlights: 'Amazing photos, sloth bear sighting, professional driver'
+                }
+            ];
+
+            displayFeedback(feedbackData);
+        }
+
+        function displayFeedback(feedbackData) {
+            const container = document.getElementById('feedbackList');
+
+            container.innerHTML = feedbackData.map(feedback => `
+                <div class="feedback-card">
+                    <div class="feedback-header">
+                        <div>
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">${feedback.customerName}</h4>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">Booking: ${feedback.bookingId} • ${SafariApp.formatDate(feedback.date)}</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="rating-display">
+                                <span>Overall:</span>
+                                <div class="rating-stars">
+                                    ${generateStars(feedback.safariRating)}
+                                </div>
+                                <span class="rating-number">${feedback.safariRating}/5</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feedback-meta">
+                        <div>
+                            <strong>Guide: ${feedback.guideName}</strong>
+                            <div class="rating-display">
+                                <div class="rating-stars">${generateStars(feedback.guideRating)}</div>
+                                <span class="rating-number">${feedback.guideRating}/5</span>
+                            </div>
+                        </div>
+                        <div>
+                            <strong>Driver: ${feedback.driverName}</strong>
+                            <div class="rating-display">
+                                <div class="rating-stars">${generateStars(feedback.driverRating)}</div>
+                                <span class="rating-number">${feedback.driverRating}/5</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin: 1rem 0;">
+                        <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Customer Feedback:</h5>
+                        <p style="font-style: italic; color: var(--text-color);">"${feedback.feedback}"</p>
+                    </div>
+
+                    <div style="margin: 1rem 0;">
+                        <h5 style="color: var(--primary-color); margin-bottom: 0.5rem;">Highlights:</h5>
+                        <p style="color: var(--text-light);">${feedback.highlights}</p>
+                    </div>
+
+                    <div class="feedback-actions">
+                        <button class="btn btn-outline btn-sm" onclick="viewFeedbackDetails(${feedback.id})">View Details</button>
+                        <button class="btn btn-primary btn-sm" onclick="respondToFeedback(${feedback.id})">Respond</button>
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="assignImprovementAction(${feedback.id})">Action Item</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function generateStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += `<span class="rating-star">${i <= rating ? '★' : '☆'}</span>`;
+            }
+            return stars;
+        }
+
+        function loadBookingData() {
+            // Mock booking data for admin view
+            const bookings = [
+                {
+                    id: 'RNW-2025-001234',
+                    customerName: 'John Smith',
+                    package: 'Morning Safari',
+                    date: '2025-01-15',
+                    participants: 2,
+                    amount: 150,
+                    status: 'CONFIRMED',
+                    guideName: 'Kumara Perera',
+                    driverName: 'Nimal Silva'
+                },
+                {
+                    id: 'RNW-2025-001235',
+                    customerName: 'Emma Johnson',
+                    package: 'Evening Safari',
+                    date: '2025-01-16',
+                    participants: 4,
+                    amount: 340,
+                    status: 'PENDING',
+                    guideName: 'Not Assigned',
+                    driverName: 'Not Assigned'
+                }
+            ];
+
+            displayBookings(bookings);
+        }
+
+        function displayBookings(bookings) {
+            const tbody = document.getElementById('bookingsTableBody');
+
+            tbody.innerHTML = bookings.map(booking => `
+                <tr>
+                    <td><strong>${booking.id}</strong></td>
+                    <td>${booking.customerName}</td>
+                    <td>${booking.package}</td>
+                    <td>${SafariApp.formatDate(booking.date)}</td>
+                    <td>${booking.participants}</td>
+                    <td>${SafariApp.formatCurrency(booking.amount)}</td>
+                    <td><span class="status-badge status-${booking.status.toLowerCase()}">${booking.status}</span></td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-outline btn-sm" onclick="editBooking('${booking.id}')">Edit</button>
+                            ${booking.status === 'PENDING' ? `<button class="btn btn-primary btn-sm" onclick="assignStaff('${booking.id}')">Assign</button>` : ''}
+                            <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="viewBookingDetails('${booking.id}')">View</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadStaffData() {
+            // Mock staff data
+            const staff = [
+                {
+                    id: 1,
+                    name: 'Kumara Perera',
+                    role: 'GUIDE',
+                    rating: 4.8,
+                    experience: '8 years',
+                    status: 'AVAILABLE',
+                    safaris: 156
+                },
+                {
+                    id: 2,
+                    name: 'Nimal Silva',
+                    role: 'DRIVER',
+                    rating: 4.6,
+                    experience: '5 years',
+                    status: 'ON_SAFARI',
+                    safaris: 203
+                },
+                {
+                    id: 3,
+                    name: 'Priya Fernando',
+                    role: 'GUIDE',
+                    rating: 4.9,
+                    experience: '12 years',
+                    status: 'AVAILABLE',
+                    safaris: 298
+                }
+            ];
+
+            displayStaff(staff);
+        }
+
+        function displayStaff(staff) {
+            const container = document.getElementById('staffList');
+
+            container.innerHTML = staff.map(member => `
+                <div class="user-card">
+                    <div class="user-avatar">${member.name.charAt(0)}</div>
+                    <div class="user-info">
+                        <h4 style="margin-bottom: 0.5rem;">${member.name}</h4>
+                        <p style="color: var(--text-light); margin-bottom: 0.5rem;">${member.role} • ${member.experience} experience</p>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <div class="rating-display">
+                                <div class="rating-stars">${generateStars(Math.floor(member.rating))}</div>
+                                <span class="rating-number">${member.rating}/5</span>
+                            </div>
+                            <span style="font-size: 0.9rem; color: var(--text-light);">${member.safaris} safaris</span>
+                            <span class="status-badge ${member.status === 'AVAILABLE' ? 'status-confirmed' : 'status-pending'}">${member.status.replace('_', ' ')}</span>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <button class="btn btn-outline btn-sm" onclick="editStaff(${member.id})">Edit</button>
+                        <button class="btn btn-primary btn-sm" onclick="viewStaffProfile(${member.id})">Profile</button>
+                        ${member.status === 'AVAILABLE' ?
+                            `<button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="assignToSafari(${member.id})">Assign</button>` :
+                            `<button class="btn btn-sm" style="background: #dc3545; color: white;" onclick="markAvailable(${member.id})">Free Up</button>`
+                        }
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadUserData() {
+            // Mock user data
+            const users = [
+                {
+                    id: 1,
+                    name: 'John Smith',
+                    email: 'john@example.com',
+                    role: 'TOURIST',
+                    joinDate: '2024-12-15',
+                    bookings: 3,
+                    status: 'ACTIVE'
+                },
+                {
+                    id: 2,
+                    name: 'Emma Johnson',
+                    email: 'emma@example.com',
+                    role: 'TOURIST',
+                    joinDate: '2024-11-20',
+                    bookings: 1,
+                    status: 'ACTIVE'
+                }
+            ];
+
+            displayUsers(users);
+        }
+
+        function displayUsers(users) {
+            const container = document.getElementById('usersList');
+
+            container.innerHTML = users.map(user => `
+                <div class="user-card">
+                    <div class="user-avatar">${user.name.charAt(0)}</div>
+                    <div class="user-info">
+                        <h4 style="margin-bottom: 0.5rem;">${user.name}</h4>
+                        <p style="color: var(--text-light); margin-bottom: 0.5rem;">${user.email}</p>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <span class="status-badge status-${user.role.toLowerCase()}">${user.role}</span>
+                            <span style="font-size: 0.9rem; color: var(--text-light);">${user.bookings} bookings</span>
+                            <span style="font-size: 0.9rem; color: var(--text-light);">Joined ${SafariApp.formatDate(user.joinDate)}</span>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <button class="btn btn-outline btn-sm" onclick="editUser(${user.id})">Edit</button>
+                        <button class="btn btn-primary btn-sm" onclick="viewUserProfile(${user.id})">Profile</button>
+                        <button class="btn btn-sm" style="background: #dc3545; color: white;" onclick="deactivateUser(${user.id})">Deactivate</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function logout() {
+            SafariApp.Auth.logout();
+        }
+
+        // Mock functions for admin actions
+        function assignStaff(bookingId) {
+            SafariApp.openModal('assignStaffModal');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function viewFeedbackDetails(id) {
+            SafariApp.Notifications.info('Viewing detailed feedback - Feature coming soon!');
+        }
+
+        function respondToFeedback(id) {
+            SafariApp.Notifications.info('Respond to customer feedback - Feature coming soon!');
+        }
+
+        function assignImprovementAction(id) {
+            SafariApp.Notifications.info('Creating improvement action item - Feature coming soon!');
+        }
+
+        function editBooking(id) {
+            SafariApp.Notifications.info(`Editing booking ${id} - Feature coming soon!`);
+        }
+
+        function viewBookingDetails(id) {
+            SafariApp.Notifications.info(`Viewing booking details ${id} - Feature coming soon!`);
+        }
+
+        function autoAssignStaff() {
+            SafariApp.Notifications.success('Auto-assigning available staff to pending bookings...');
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Ranweli Safari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            max-width: 450px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-primary);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .auth-form {
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(44, 85, 48, 0.1);
+        }
+
+        .form-label {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            background: white;
+            padding: 0 0.5rem;
+        }
+
+        .form-control:focus + .form-label,
+        .form-control:not(:placeholder-shown) + .form-label {
+            top: 0;
+            font-size: 0.875rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin: 1rem 0;
+        }
+
+        .forgot-password a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(44, 85, 48, 0.3);
+        }
+
+        .auth-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-divider {
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .auth-divider span {
+            background: white;
+            padding: 0 1rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .social-login {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-btn {
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .social-btn:hover {
+            border-color: var(--primary-color);
+            background: #f8f9fa;
+        }
+
+        .auth-footer {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .auth-footer p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .auth-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .back-home {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-home:hover {
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                padding: 1rem;
+            }
+
+            .auth-card {
+                padding: 2rem;
+            }
+
+            .social-login {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <a href="/" class="back-home">
+            ← Back to Home
+        </a>
+
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">🦁</div>
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Sign in to your Ranweli Safari account</p>
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+
+            <form class="auth-form" id="loginForm">
+                <div class="form-group">
+                    <input type="email" class="form-control" id="email" placeholder=" " required>
+                    <label class="form-label" for="email">Email Address</label>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" class="form-control" id="password" placeholder=" " required>
+                    <label class="form-label" for="password">Password</label>
+                    <span class="password-toggle" onclick="togglePassword()">👁️</span>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="#" onclick="showForgotPassword()">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="auth-btn">
+                    <div class="loading-spinner"></div>
+                    Sign In
+                </button>
+            </form>
+
+            <div class="auth-divider">
+                <span>or continue with</span>
+            </div>
+
+            <div class="social-login">
+                <button class="social-btn" onclick="socialLogin('google')">
+                    <span>🔍</span>
+                    Google
+                </button>
+                <button class="social-btn" onclick="socialLogin('facebook')">
+                    <span>📘</span>
+                    Facebook
+                </button>
+            </div>
+
+            <div class="auth-footer">
+                <p>Don't have an account?</p>
+                <a href="signup.html">Create Account</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal" id="forgotPasswordModal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Reset Password</h3>
+            <p style="margin-bottom: 2rem; color: var(--text-light);">
+                Enter your email address and we'll send you a link to reset your password.
+            </p>
+
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <input type="email" class="form-control" placeholder="Enter your email address" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    Send Reset Link
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is already logged in
+            if (SafariApp.Auth.isAuthenticated()) {
+                const userRole = SafariApp.Auth.getUserRole();
+                redirectToDashboard(userRole);
+            }
+
+            // Login form submission
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+            // Forgot password form
+            document.getElementById('forgotPasswordForm').addEventListener('submit', handleForgotPassword);
+        });
+
+        async function handleLogin(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const spinner = submitBtn.querySelector('.loading-spinner');
+
+            // Show loading state
+            submitBtn.disabled = true;
+            spinner.style.display = 'inline-block';
+            submitBtn.textContent = 'Signing In...';
+
+            hideMessages();
+
+            try {
+                const response = await SafariApp.Auth.login(email, password);
+
+                showSuccessMessage('Login successful! Redirecting...');
+
+                // Redirect based on user role
+                setTimeout(() => {
+                    redirectToDashboard(response.role);
+                }, 1500);
+
+            } catch (error) {
+                showErrorMessage('Invalid email or password. Please try again.');
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                spinner.style.display = 'none';
+                submitBtn.textContent = 'Sign In';
+            }
+        }
+
+        function redirectToDashboard(role) {
+            switch (role) {
+                case 'ADMIN':
+                    window.location.href = 'dashboards/admin.html';
+                    break;
+                case 'GUIDE':
+                    window.location.href = 'dashboards/guide.html';
+                    break;
+                case 'DRIVER':
+                    window.location.href = 'dashboards/driver.html';
+                    break;
+                case 'PACKAGE_BUILDER':
+                    window.location.href = 'dashboards/package-builder.html';
+                    break;
+                case 'BOOKING_OFFICER':
+                    window.location.href = 'dashboards/booking-officer.html';
+                    break;
+                case 'MAINTENANCE_OFFICER':
+                    window.location.href = 'dashboards/maintenance-officer.html';
+                    break;
+                case 'TOUR_CREW_MANAGER':
+                    window.location.href = 'dashboards/tour-crew-manager.html';
+                    break;
+                case 'TOURIST':
+                default:
+                    window.location.href = 'dashboards/tourist.html';
+                    break;
+            }
+        }
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggle = document.querySelector('.password-toggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggle.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggle.textContent = '👁️';
+            }
+        }
+
+        function showForgotPassword() {
+            SafariApp.openModal('forgotPasswordModal');
+        }
+
+        async function handleForgotPassword(e) {
+            e.preventDefault();
+
+            const email = e.target.querySelector('input[type="email"]').value;
+
+            try {
+                await SafariApp.API.post('/api/auth/forgot-password', { email });
+                SafariApp.Notifications.success('Password reset link sent to your email!');
+                SafariApp.closeModal(document.getElementById('forgotPasswordModal'));
+                e.target.reset();
+            } catch (error) {
+                SafariApp.Notifications.error('Failed to send reset link. Please try again.');
+            }
+        }
+
+        async function socialLogin(provider) {
+            try {
+                // Redirect to OAuth provider
+                window.location.href = `/api/auth/oauth/${provider}`;
+            } catch (error) {
+                showErrorMessage(`Failed to sign in with ${provider}. Please try again.`);
+            }
+        }
+
+        function showErrorMessage(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            hideSuccessMessage();
+        }
+
+        function showSuccessMessage(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            hideErrorMessage();
+        }
+
+        function hideErrorMessage() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function hideSuccessMessage() {
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function hideMessages() {
+            hideErrorMessage();
+            hideSuccessMessage();
+        }
+    </script>
+</body>
+</html>

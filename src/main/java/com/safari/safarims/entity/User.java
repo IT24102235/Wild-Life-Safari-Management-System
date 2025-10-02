@@ -26,23 +26,23 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 100)
     private String username;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 150)
     private String email;
 
-    @Column(name = "password_hash", nullable = false)
+    @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
-    @Column(name = "full_name", nullable = false)
+    @Column(name = "full_name", nullable = false, length = 200)
     private String fullName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String phone;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private UserRole role;
 
     @Column(name = "email_verified")
@@ -57,10 +57,10 @@ public class User implements UserDetails {
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
 
-    @Column(name = "created_by")
+    @Column(name = "created_by", length = 50)
     private String createdBy;
 
-    @Column(name = "updated_by")
+    @Column(name = "updated_by", length = 50)
     private String updatedBy;
 
     @Column(name = "created_at")

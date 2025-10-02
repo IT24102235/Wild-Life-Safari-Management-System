@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package Builder Dashboard - Ranweli Safari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/main.css">
+    <style>
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+            background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+            color: white;
+        }
+
+        .builder-badge {
+            background: #6f42c1;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: #f8f9fa;
+            border-left-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .menu-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .package-builder {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .package-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 5px solid #6f42c1;
+        }
+
+        .package-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .package-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-active { background: #d4edda; color: #155724; }
+        .status-draft { background: #fff3cd; color: #856404; }
+        .status-inactive { background: #f8d7da; color: #721c24; }
+
+        .package-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-icon {
+            color: #6f42c1;
+        }
+
+        .form-builder {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 1rem 0;
+        }
+
+        .form-step {
+            margin-bottom: 2rem;
+        }
+
+        .form-step h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-number {
+            background: #6f42c1;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .package-preview {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 2px dashed #6f42c1;
+            margin-top: 2rem;
+        }
+
+        .pricing-calculator {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .itinerary-builder {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .itinerary-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .time-slot {
+            background: #6f42c1;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .analytics-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .analytics-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .analytics-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #6f42c1;
+            margin-bottom: 0.5rem;
+        }
+
+        .analytics-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Package Builder</h3>
+                <div class="builder-badge">TOUR DESIGNER</div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-section="overview">
+                    <span class="menu-icon">📊</span>
+                    Overview
+                </a>
+                <a href="#" class="menu-item" data-section="packages">
+                    <span class="menu-icon">📦</span>
+                    My Packages
+                </a>
+                <a href="#" class="menu-item" data-section="builder">
+                    <span class="menu-icon">🔨</span>
+                    Package Builder
+                </a>
+                <a href="#" class="menu-item" data-section="pricing">
+                    <span class="menu-icon">💰</span>
+                    Pricing & Analytics
+                </a>
+                <a href="#" class="menu-item" data-section="templates">
+                    <span class="menu-icon">📋</span>
+                    Templates
+                </a>
+                <a href="#" class="menu-item" data-section="feedback">
+                    <span class="menu-icon">⭐</span>
+                    Package Feedback
+                </a>
+            </nav>
+
+            <div style="padding: 2rem;">
+                <button class="logout-btn" style="background: #dc3545; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; width: 100%;" onclick="logout()">
+                    🚪 Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview Section -->
+            <section class="content-section active" id="overview">
+                <div class="section-header">
+                    <h1>Package Builder Dashboard</h1>
+                    <p>Design and manage safari tour packages</p>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="analytics-card">
+                        <div class="analytics-number">12</div>
+                        <div class="analytics-label">Active Packages</div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="analytics-number">3</div>
+                        <div class="analytics-label">Draft Packages</div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="analytics-number">89%</div>
+                        <div class="analytics-label">Customer Satisfaction</div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="analytics-number">$2,450</div>
+                        <div class="analytics-label">Avg Package Revenue</div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h2>Recent Package Performance</h2>
+                    <button class="btn btn-primary" onclick="showSection('builder')">Create New Package</button>
+                </div>
+
+                <div id="recentPackages">
+                    <!-- Recent packages will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Packages Section -->
+            <section class="content-section" id="packages">
+                <div class="section-header">
+                    <h2>My Safari Packages</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="active">Active</button>
+                        <button class="filter-btn" data-filter="draft">Draft</button>
+                        <button class="filter-btn" data-filter="inactive">Inactive</button>
+                    </div>
+                </div>
+
+                <div id="allPackages">
+                    <!-- All packages will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Package Builder Section -->
+            <section class="content-section" id="builder">
+                <div class="section-header">
+                    <h2>Create New Safari Package</h2>
+                    <button class="btn btn-outline" onclick="loadTemplate()">Load Template</button>
+                </div>
+
+                <div class="package-builder">
+                    <form id="packageBuilderForm">
+                        <div class="form-step">
+                            <h4><span class="step-number">1</span>Basic Information</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Package Name</label>
+                                    <input type="text" class="form-control" id="packageName" placeholder="e.g., Morning Wildlife Safari" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Package Type</label>
+                                    <select class="form-control" id="packageType" required>
+                                        <option value="">Select Type</option>
+                                        <option value="morning">Morning Safari</option>
+                                        <option value="evening">Evening Safari</option>
+                                        <option value="fullday">Full Day Safari</option>
+                                        <option value="night">Night Safari</option>
+                                        <option value="photography">Photography Safari</option>
+                                        <option value="birdwatching">Bird Watching Safari</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Duration (hours)</label>
+                                    <input type="number" class="form-control" id="duration" min="1" max="24" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Max Participants</label>
+                                    <input type="number" class="form-control" id="maxParticipants" min="1" max="12" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Package Description</label>
+                                <textarea class="form-control" id="packageDescription" rows="3" placeholder="Describe the safari experience..." required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-step">
+                            <h4><span class="step-number">2</span>Itinerary Builder</h4>
+                            <div class="itinerary-builder">
+                                <div class="itinerary-item">
+                                    <div class="time-slot">06:00</div>
+                                    <div style="flex: 1;">
+                                        <input type="text" class="form-control" placeholder="Activity description" value="Pickup from hotel">
+                                    </div>
+                                    <button type="button" class="btn btn-outline btn-sm" onclick="removeItineraryItem(this)">Remove</button>
+                                </div>
+                                <div class="itinerary-item">
+                                    <div class="time-slot">06:30</div>
+                                    <div style="flex: 1;">
+                                        <input type="text" class="form-control" placeholder="Activity description" value="Enter Ranweli National Park">
+                                    </div>
+                                    <button type="button" class="btn btn-outline btn-sm" onclick="removeItineraryItem(this)">Remove</button>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="addItineraryItem()">Add Activity</button>
+                            </div>
+                        </div>
+
+                        <div class="form-step">
+                            <h4><span class="step-number">3</span>Pricing & Inclusions</h4>
+                            <div class="pricing-calculator">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Base Price (per person)</label>
+                                        <input type="number" class="form-control" id="basePrice" min="1" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Peak Season Multiplier</label>
+                                        <input type="number" class="form-control" id="peakMultiplier" min="1" step="0.1" value="1.2">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Inclusions</label>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 0.5rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <input type="checkbox" id="incl_transport" checked>
+                                            <label for="incl_transport">Transportation</label>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <input type="checkbox" id="incl_guide" checked>
+                                            <label for="incl_guide">Professional Guide</label>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <input type="checkbox" id="incl_water" checked>
+                                            <label for="incl_water">Water Bottles</label>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <input type="checkbox" id="incl_binoculars">
+                                            <label for="incl_binoculars">Binoculars</label>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <input type="checkbox" id="incl_lunch">
+                                            <label for="incl_lunch">Lunch (Full Day)</label>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <input type="checkbox" id="incl_insurance">
+                                            <label for="incl_insurance">Travel Insurance</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-step">
+                            <h4><span class="step-number">4</span>Requirements & Restrictions</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Minimum Age</label>
+                                    <input type="number" class="form-control" id="minAge" min="0" value="5">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Fitness Level Required</label>
+                                    <select class="form-control" id="fitnessLevel">
+                                        <option value="low">Low - Suitable for all</option>
+                                        <option value="moderate">Moderate - Some walking required</option>
+                                        <option value="high">High - Good fitness required</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Special Requirements</label>
+                                <textarea class="form-control" id="specialRequirements" rows="2" placeholder="Any special requirements or restrictions..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="package-preview">
+                            <h4 style="color: #6f42c1; margin-bottom: 1rem;">Package Preview</h4>
+                            <div id="packagePreview">
+                                <!-- Preview will be generated here -->
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                            <button type="button" class="btn btn-outline" onclick="saveAsDraft()">Save as Draft</button>
+                            <button type="submit" class="btn btn-primary">Publish Package</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Pricing & Analytics Section -->
+            <section class="content-section" id="pricing">
+                <div class="section-header">
+                    <h2>Pricing & Analytics</h2>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="analytics-card">
+                        <div class="analytics-number">$75</div>
+                        <div class="analytics-label">Avg Morning Safari</div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="analytics-number">$85</div>
+                        <div class="analytics-label">Avg Evening Safari</div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="analytics-number">$150</div>
+                        <div class="analytics-label">Avg Full Day Safari</div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="analytics-number">68%</div>
+                        <div class="analytics-label">Booking Conversion</div>
+                    </div>
+                </div>
+
+                <div class="chart-container" style="background: white; border-radius: 15px; padding: 2rem; box-shadow: var(--shadow); margin: 2rem 0;">
+                    <h3>Package Performance Trends</h3>
+                    <div style="height: 300px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-light); margin-top: 1rem;">
+                        📈 Package performance chart placeholder
+                    </div>
+                </div>
+            </section>
+
+            <!-- Templates Section -->
+            <section class="content-section" id="templates">
+                <div class="section-header">
+                    <h2>Package Templates</h2>
+                    <button class="btn btn-primary" onclick="createTemplate()">Create Template</button>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card">
+                        <h4>Morning Wildlife Safari</h4>
+                        <p>Standard 3-hour morning safari template with wildlife viewing focus.</p>
+                        <div style="margin-top: 1rem;">
+                            <button class="btn btn-primary btn-sm" onclick="useTemplate('morning')">Use Template</button>
+                            <button class="btn btn-outline btn-sm" onclick="editTemplate('morning')">Edit</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4>Photography Safari</h4>
+                        <p>Specialized package for wildlife photography enthusiasts.</p>
+                        <div style="margin-top: 1rem;">
+                            <button class="btn btn-primary btn-sm" onclick="useTemplate('photography')">Use Template</button>
+                            <button class="btn btn-outline btn-sm" onclick="editTemplate('photography')">Edit</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4>Family Safari</h4>
+                        <p>Family-friendly safari package suitable for children.</p>
+                        <div style="margin-top: 1rem;">
+                            <button class="btn btn-primary btn-sm" onclick="useTemplate('family')">Use Template</button>
+                            <button class="btn btn-outline btn-sm" onclick="editTemplate('family')">Edit</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feedback Section -->
+            <section class="content-section" id="feedback">
+                <div class="section-header">
+                    <h2>Package Feedback</h2>
+                </div>
+
+                <div id="packageFeedback">
+                    <!-- Feedback for packages will be loaded here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            if (!SafariApp.Auth.isAuthenticated() || SafariApp.Auth.getUserRole() !== 'PACKAGE_BUILDER') {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Initialize dashboard
+            loadPackages();
+            setupFormListeners();
+
+            // Menu navigation
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    showSection(section);
+
+                    document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+
+        function setupFormListeners() {
+            // Auto-update preview when form changes
+            const formInputs = document.querySelectorAll('#packageBuilderForm input, #packageBuilderForm select, #packageBuilderForm textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('input', updatePackagePreview);
+            });
+
+            document.getElementById('packageBuilderForm').addEventListener('submit', handlePackageSubmission);
+        }
+
+        function loadPackages() {
+            // Mock package data
+            const packages = [
+                {
+                    id: 'PKG-001',
+                    name: 'Morning Wildlife Safari',
+                    type: 'morning',
+                    duration: 3,
+                    price: 75,
+                    status: 'active',
+                    bookings: 45,
+                    rating: 4.8
+                },
+                {
+                    id: 'PKG-002',
+                    name: 'Evening Photography Safari',
+                    type: 'evening',
+                    duration: 3,
+                    price: 85,
+                    status: 'active',
+                    bookings: 32,
+                    rating: 4.9
+                },
+                {
+                    id: 'PKG-003',
+                    name: 'Full Day Adventure',
+                    type: 'fullday',
+                    duration: 12,
+                    price: 150,
+                    status: 'draft',
+                    bookings: 0,
+                    rating: 0
+                }
+            ];
+
+            displayPackages(packages, 'recentPackages');
+            displayPackages(packages, 'allPackages');
+        }
+
+        function displayPackages(packages, containerId) {
+            const container = document.getElementById(containerId);
+
+            container.innerHTML = packages.map(pkg => `
+                <div class="package-card">
+                    <div class="package-header">
+                        <div>
+                            <h4 style="color: #6f42c1; margin-bottom: 0.5rem;">${pkg.name}</h4>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">Package ID: ${pkg.id}</p>
+                        </div>
+                        <div class="package-status status-${pkg.status}">${pkg.status.toUpperCase()}</div>
+                    </div>
+
+                    <div class="package-details">
+                        <div class="detail-item">
+                            <span class="detail-icon">⏱️</span>
+                            <span>${pkg.duration} hours</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">💰</span>
+                            <span>$${pkg.price} per person</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">📊</span>
+                            <span>${pkg.bookings} bookings</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">⭐</span>
+                            <span>${pkg.rating}/5 rating</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button class="btn btn-primary btn-sm" onclick="editPackage('${pkg.id}')">Edit</button>
+                        <button class="btn btn-outline btn-sm" onclick="duplicatePackage('${pkg.id}')">Duplicate</button>
+                        <button class="btn btn-sm" style="background: var(--secondary-color); color: white;" onclick="viewAnalytics('${pkg.id}')">Analytics</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addItineraryItem() {
+            const container = document.querySelector('.itinerary-builder');
+            const newItem = document.createElement('div');
+            newItem.className = 'itinerary-item';
+            newItem.innerHTML = `
+                <div class="time-slot">
+                    <input type="time" style="background: transparent; border: none; color: white; width: 80px;">
+                </div>
+                <div style="flex: 1;">
+                    <input type="text" class="form-control" placeholder="Activity description">
+                </div>
+                <button type="button" class="btn btn-outline btn-sm" onclick="removeItineraryItem(this)">Remove</button>
+            `;
+            container.insertBefore(newItem, container.lastElementChild);
+        }
+
+        function removeItineraryItem(button) {
+            button.parentElement.remove();
+        }
+
+        function updatePackagePreview() {
+            const preview = document.getElementById('packagePreview');
+            const name = document.getElementById('packageName').value || 'Untitled Package';
+            const duration = document.getElementById('duration').value || '0';
+            const price = document.getElementById('basePrice').value || '0';
+
+            preview.innerHTML = `
+                <h5>${name}</h5>
+                <p><strong>Duration:</strong> ${duration} hours</p>
+                <p><strong>Price:</strong> $${price} per person</p>
+                <p><strong>Status:</strong> Draft</p>
+            `;
+        }
+
+        function handlePackageSubmission(e) {
+            e.preventDefault();
+            SafariApp.Notifications.success('Package published successfully!');
+            showSection('packages');
+            loadPackages();
+        }
+
+        function saveAsDraft() {
+            SafariApp.Notifications.success('Package saved as draft!');
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function logout() {
+            SafariApp.Auth.logout();
+        }
+
+        // Mock functions
+        function editPackage(id) {
+            SafariApp.Notifications.info(`Editing package ${id} - Feature coming soon!`);
+        }
+
+        function duplicatePackage(id) {
+            SafariApp.Notifications.success(`Package ${id} duplicated!`);
+        }
+
+        function viewAnalytics(id) {
+            SafariApp.Notifications.info(`Viewing analytics for package ${id} - Feature coming soon!`);
+        }
+
+        function loadTemplate() {
+            SafariApp.Notifications.info('Loading template - Feature coming soon!');
+        }
+
+        function createTemplate() {
+            SafariApp.Notifications.info('Creating template - Feature coming soon!');
+        }
+
+        function useTemplate(type) {
+            SafariApp.Notifications.success(`Template ${type} loaded!`);
+            showSection('builder');
+        }
+
+        function editTemplate(type) {
+            SafariApp.Notifications.info(`Editing template ${type} - Feature coming soon!`);
+        }
+    </script>
+</body>
+</html>
+

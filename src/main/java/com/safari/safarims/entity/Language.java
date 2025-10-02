@@ -20,13 +20,13 @@ public class Language {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 50)
     private String code;
 
-    @Column(name = "iso_code", unique = true, nullable = false)
+    @Column(name = "iso_code", unique = true, nullable = false, length = 10)
     private String isoCode;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 150)
     private String name;
 
     @Column(name = "created_at")

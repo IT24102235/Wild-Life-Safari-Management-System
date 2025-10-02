@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact & Feedback - Ranweli Safari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .contact-section {
+            padding: 6rem 0 2rem;
+        }
+
+        .contact-hero {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .contact-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-tab {
+            padding: 1rem 2rem;
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .contact-tab.active,
+        .contact-tab:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .contact-content {
+            display: none;
+        }
+
+        .contact-content.active {
+            display: block;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin: 3rem 0;
+        }
+
+        .contact-info {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .contact-details h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-form {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .feedback-form {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
+        }
+
+        .rating-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .rating-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .rating-label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .star {
+            font-size: 1.8rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffd700;
+            transform: scale(1.1);
+        }
+
+        .feedback-not-eligible {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #856404;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .feedback-eligible {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 2px solid #155724;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .safari-info {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .location-map {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .map-container {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8ff 100%);
+            border-radius: 15px;
+            padding: 3rem;
+            margin: 2rem 0;
+            border: 2px solid var(--primary-color);
+        }
+
+        .operating-hours {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin: 3rem 0;
+        }
+
+        .hours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .hours-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 2px solid var(--secondary-color);
+        }
+
+        .hours-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .time-slot {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .time-slot:last-child {
+            border-bottom: none;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .social-link {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        .feedback-status {
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status-checking {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-eligible {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-not-eligible {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-error {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        @media (max-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .rating-item {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">Ranweli Safari</a>
+
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="visitor-guide.html">Visitor Guide</a></li>
+                <li><a href="what-to-do.html">What To Do</a></li>
+                <li><a href="contact.html" class="active">Contact</a></li>
+            </ul>
+
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="signup.html" class="btn btn-primary">Book Safari</a>
+            </div>
+
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="contact-hero">
+        <div class="container">
+            <h1 class="fade-in">Contact Us & Feedback</h1>
+            <p class="fade-in" style="font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
+                Get in touch with us or share your safari experience through our feedback system
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <!-- Contact Tabs -->
+            <div class="contact-tabs fade-in">
+                <button class="contact-tab active" data-tab="contact">Contact Us</button>
+                <button class="contact-tab" data-tab="feedback">Submit Feedback</button>
+                <button class="contact-tab" data-tab="location">Location & Hours</button>
+            </div>
+
+            <!-- Contact Us Content -->
+            <div class="contact-content active" id="contact">
+                <div class="section-header">
+                    <h2 class="section-title">Get In Touch</h2>
+                    <p class="section-subtitle">We're here to help you plan your perfect safari adventure</p>
+                </div>
+
+                <div class="contact-grid">
+                    <div class="contact-info fade-in">
+                        <h3 style="color: var(--primary-color); margin-bottom: 2rem;">Contact Information</h3>
+
+                        <div class="contact-item">
+                            <div class="contact-icon">📞</div>
+                            <div class="contact-details">
+                                <h4>Phone</h4>
+                                <p>+94 77 123 4567</p>
+                                <p>Available 24/7 for emergencies</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-icon">📧</div>
+                            <div class="contact-details">
+                                <h4>Email</h4>
+                                <p>info@ranwelisafari.com</p>
+                                <p>Response within 24 hours</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-icon">📍</div>
+                            <div class="contact-details">
+                                <h4>Address</h4>
+                                <p>Ranweli National Park</p>
+                                <p>Tissamaharama, Sri Lanka</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-icon">💬</div>
+                            <div class="contact-details">
+                                <h4>WhatsApp</h4>
+                                <p>+94 77 123 4567</p>
+                                <p>Quick responses & booking</p>
+                            </div>
+                        </div>
+
+                        <div class="social-links">
+                            <a href="#" class="social-link">📘</a>
+                            <a href="#" class="social-link">📷</a>
+                            <a href="#" class="social-link">🐦</a>
+                            <a href="#" class="social-link">📺</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-form fade-in">
+                        <h3 style="color: var(--primary-color); margin-bottom: 2rem;">Send Us a Message</h3>
+
+                        <form id="contactForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">First Name *</label>
+                                    <input type="text" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name *</label>
+                                    <input type="text" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Email *</label>
+                                    <input type="email" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Subject *</label>
+                                <select class="form-control" required>
+                                    <option value="">Select a subject</option>
+                                    <option value="booking">Safari Booking Inquiry</option>
+                                    <option value="info">General Information</option>
+                                    <option value="group">Group Bookings</option>
+                                    <option value="special">Special Requirements</option>
+                                    <option value="complaint">Complaint</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Message *</label>
+                                <textarea class="form-control" placeholder="Tell us how we can help you..." required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Content -->
+            <div class="contact-content" id="feedback">
+                <div class="section-header">
+                    <h2 class="section-title">Share Your Safari Experience</h2>
+                    <p class="section-subtitle">Help us improve by rating your safari, driver, and tour guide</p>
+                </div>
+
+                <!-- Feedback Eligibility Check -->
+                <div class="feedback-form fade-in">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Feedback Eligibility Check</h3>
+                    <p>Please enter your booking reference to verify your completed safari:</p>
+
+                    <div class="form-group">
+                        <label class="form-label">Booking Reference Number</label>
+                        <input type="text" id="bookingRef" class="form-control" placeholder="e.g., RNW-2025-001234">
+                        <button type="button" id="checkEligibility" class="btn btn-primary" style="margin-top: 1rem;">
+                            Check Eligibility
+                        </button>
+                    </div>
+
+                    <div id="eligibilityStatus" class="feedback-status status-checking" style="display: none;">
+                        Checking your booking status...
+                    </div>
+                </div>
+
+                <!-- Feedback Form (shown when eligible) -->
+                <div id="feedbackFormContainer" style="display: none;">
+                    <div class="feedback-form fade-in">
+                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Rate Your Experience</h3>
+
+                        <div id="safariInfo" class="safari-info">
+                            <!-- Safari information will be populated here -->
+                        </div>
+
+                        <form id="feedbackSubmissionForm">
+                            <div class="rating-section">
+                                <h4 style="color: var(--primary-color); margin-bottom: 1.5rem;">Rate Your Experience</h4>
+
+                                <div class="rating-item">
+                                    <span class="rating-label">Overall Safari Experience</span>
+                                    <div class="star-rating" data-rating="safari">
+                                        <span class="star" data-value="1">★</span>
+                                        <span class="star" data-value="2">★</span>
+                                        <span class="star" data-value="3">★</span>
+                                        <span class="star" data-value="4">★</span>
+                                        <span class="star" data-value="5">★</span>
+                                    </div>
+                                </div>
+
+                                <div class="rating-item">
+                                    <span class="rating-label">Tour Guide Performance</span>
+                                    <div class="star-rating" data-rating="guide">
+                                        <span class="star" data-value="1">★</span>
+                                        <span class="star" data-value="2">★</span>
+                                        <span class="star" data-value="3">★</span>
+                                        <span class="star" data-value="4">★</span>
+                                        <span class="star" data-value="5">★</span>
+                                    </div>
+                                </div>
+
+                                <div class="rating-item">
+                                    <span class="rating-label">Driver & Vehicle</span>
+                                    <div class="star-rating" data-rating="driver">
+                                        <span class="star" data-value="1">★</span>
+                                        <span class="star" data-value="2">★</span>
+                                        <span class="star" data-value="3">★</span>
+                                        <span class="star" data-value="4">★</span>
+                                        <span class="star" data-value="5">★</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">What did you enjoy most about your safari?</label>
+                                <textarea class="form-control" placeholder="Tell us about the highlights of your experience..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Any suggestions for improvement?</label>
+                                <textarea class="form-control" placeholder="Help us improve our services..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Would you recommend us to others?</label>
+                                <select class="form-control">
+                                    <option value="">Select an option</option>
+                                    <option value="definitely">Definitely</option>
+                                    <option value="probably">Probably</option>
+                                    <option value="maybe">Maybe</option>
+                                    <option value="probably-not">Probably Not</option>
+                                    <option value="definitely-not">Definitely Not</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                Submit Feedback
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Not Eligible Message -->
+                <div id="notEligibleMessage" class="feedback-not-eligible" style="display: none;">
+                    <h3>🚫 Feedback Not Available</h3>
+                    <p>We're sorry, but feedback submission is only available for customers who have completed a paid safari with us.</p>
+                    <p><strong>To submit feedback, you must:</strong></p>
+                    <ul style="text-align: left; max-width: 400px; margin: 1rem auto;">
+                        <li>Have completed a safari within the last 30 days</li>
+                        <li>Have a valid booking reference</li>
+                        <li>Have completed payment for your safari</li>
+                    </ul>
+                    <p>If you believe this is an error, please <a href="#" onclick="switchTab('contact')" style="color: #856404; text-decoration: underline;">contact us</a> directly.</p>
+                </div>
+            </div>
+
+            <!-- Location & Hours Content -->
+            <div class="contact-content" id="location">
+                <div class="section-header">
+                    <h2 class="section-title">Visit Us</h2>
+                    <p class="section-subtitle">Find us and plan your visit with our operating hours</p>
+                </div>
+
+                <div class="location-map fade-in">
+                    <h3 style="color: var(--primary-color); margin-bottom: 2rem;">📍 Our Location</h3>
+
+                    <div class="map-container">
+                        <div style="text-align: center; color: var(--primary-color);">
+                            <h4>🗺️ Interactive Map</h4>
+                            <p style="margin: 1rem 0;">Ranweli National Park Entrance</p>
+                            <p>Coordinates: 6.3014° N, 81.2808° E</p>
+                            <div style="margin: 2rem 0;">
+                                <strong>Driving Directions:</strong><br>
+                                • From Colombo: Take A2 highway south to Hambantota, then A18 to Tissamaharama<br>
+                                • From Airport: Approximately 3.5 hours drive via Southern Expressway<br>
+                                • GPS: Use "Ranweli National Park" or coordinates above
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="operating-hours fade-in">
+                    <h3 style="color: var(--primary-color); margin-bottom: 2rem;">🕐 Operating Hours</h3>
+
+                    <div class="hours-grid">
+                        <div class="hours-card">
+                            <h4>Park Entry Times</h4>
+                            <div class="time-slot">
+                                <span>Early Morning</span>
+                                <span>6:00 AM</span>
+                            </div>
+                            <div class="time-slot">
+                                <span>Late Morning</span>
+                                <span>9:00 AM</span>
+                            </div>
+                            <div class="time-slot">
+                                <span>Afternoon</span>
+                                <span>2:00 PM</span>
+                            </div>
+                            <div class="time-slot">
+                                <span>Evening</span>
+                                <span>3:30 PM</span>
+                            </div>
+                        </div>
+
+                        <div class="hours-card">
+                            <h4>Office Hours</h4>
+                            <div class="time-slot">
+                                <span>Monday - Friday</span>
+                                <span>8:00 AM - 6:00 PM</span>
+                            </div>
+                            <div class="time-slot">
+                                <span>Saturday</span>
+                                <span>8:00 AM - 8:00 PM</span>
+                            </div>
+                            <div class="time-slot">
+                                <span>Sunday</span>
+                                <span>7:00 AM - 8:00 PM</span>
+                            </div>
+                            <div class="time-slot">
+                                <span>Emergency Line</span>
+                                <span>24/7</span>
+                            </div>
+                        </div>
+
+                        <div class="hours-card">
+                            <h4>Best Visiting Times</h4>
+                            <div class="time-slot">
+                                <span>Wildlife Activity</span>
+                                <span>6-9 AM, 3-6 PM</span>
+                            </div>
+                            <div class="time-slot">
+                                <span>Photography</span>
+                                <span>Golden Hours</span>
+                            </div>
+                            <div class="time-slot">
+                                <span>Bird Watching</span>
+                                <span>Early Morning</span>
+                            </div>
+                            <div class="time-slot">
+                                <span>Leopard Spotting</span>
+                                <span>Late Afternoon</span>
+                            </div>
+                        </div>
+
+                        <div class="hours-card">
+                            <h4>Seasonal Information</h4>
+                            <div class="time-slot">
+                                <span>Dry Season</span>
+                                <span>May - September</span>
+                            </div>
+                            <div class="time-slot">
+                                <span>Wet Season</span>
+                                <span>October - January</span>
+                            </div>
+                            <div class="time-slot">
+                                <span>Best Weather</span>
+                                <span>February - April</span>
+                            </div>
+                            <div class="time-slot">
+                                <span>Peak Season</span>
+                                <span>June - August</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box fade-in">
+                    <h3>ℹ️ Important Information</h3>
+                    <p><strong>Advance Booking:</strong> Recommended, especially during peak season<br>
+                    <strong>Last Entry:</strong> 4:00 PM for evening safaris<br>
+                    <strong>Park Closure:</strong> 6:30 PM (all vehicles must exit)<br>
+                    <strong>Weather Policy:</strong> Safaris may be cancelled due to severe weather conditions<br>
+                    <strong>Holiday Hours:</strong> Special hours during Sinhala/Tamil New Year and major holidays</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: var(--primary-color); color: white; padding: 3rem 0 1rem;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                <div>
+                    <h3 style="margin-bottom: 1rem;">Ranweli Safari</h3>
+                    <p>Experience the wild beauty of Sri Lanka's premier national park with expert guides and premium service.</p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Quick Links</h4>
+                    <ul style="list-style: none;">
+                        <li><a href="/" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Home</a></li>
+                        <li><a href="gallery.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Gallery</a></li>
+                        <li><a href="visitor-guide.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Visitor Guide</a></li>
+                        <li><a href="what-to-do.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">What To Do</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Contact Info</h4>
+                    <p>📧 info@ranwelisafari.com</p>
+                    <p>📞 +94 77 123 4567</p>
+                    <p>📍 Ranweli National Park, Sri Lanka</p>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                <p>&copy; 2025 Ranweli Safari Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Tab functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const contactTabs = document.querySelectorAll('.contact-tab');
+            const contactContents = document.querySelectorAll('.contact-content');
+
+            contactTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchTab(tab.dataset.tab);
+                });
+            });
+
+            // Star rating functionality
+            initStarRating();
+
+            // Eligibility check
+            document.getElementById('checkEligibility').addEventListener('click', checkFeedbackEligibility);
+
+            // Form submissions
+            document.getElementById('contactForm').addEventListener('submit', submitContactForm);
+        });
+
+        function switchTab(tabName) {
+            const contactTabs = document.querySelectorAll('.contact-tab');
+            const contactContents = document.querySelectorAll('.contact-content');
+
+            contactTabs.forEach(t => t.classList.remove('active'));
+            contactContents.forEach(c => c.classList.remove('active'));
+
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function initStarRating() {
+            const ratings = {};
+
+            document.querySelectorAll('.star-rating').forEach(rating => {
+                const category = rating.dataset.rating;
+                const stars = rating.querySelectorAll('.star');
+
+                stars.forEach((star, index) => {
+                    star.addEventListener('click', () => {
+                        const value = index + 1;
+                        ratings[category] = value;
+
+                        stars.forEach((s, i) => {
+                            if (i < value) {
+                                s.classList.add('active');
+                            } else {
+                                s.classList.remove('active');
+                            }
+                        });
+
+                        console.log('Ratings:', ratings);
+                    });
+
+                    star.addEventListener('mouseenter', () => {
+                        stars.forEach((s, i) => {
+                            if (i <= index) {
+                                s.style.color = '#ffd700';
+                            } else {
+                                s.style.color = '#ddd';
+                            }
+                        });
+                    });
+                });
+
+                rating.addEventListener('mouseleave', () => {
+                    const currentValue = ratings[category] || 0;
+                    stars.forEach((s, i) => {
+                        if (i < currentValue) {
+                            s.style.color = '#ffd700';
+                        } else {
+                            s.style.color = '#ddd';
+                        }
+                    });
+                });
+            });
+
+            // Store ratings globally for form submission
+            window.safariRatings = ratings;
+        }
+
+        async function checkFeedbackEligibility() {
+            const bookingRef = document.getElementById('bookingRef').value.trim();
+            const statusDiv = document.getElementById('eligibilityStatus');
+
+            if (!bookingRef) {
+                alert('Please enter your booking reference number');
+                return;
+            }
+
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'feedback-status status-checking';
+            statusDiv.textContent = 'Checking your booking status...';
+
+            try {
+                // Simulate API call to check booking eligibility
+                const response = await SafariApp.API.get(`/api/bookings/${bookingRef}/feedback-eligibility`);
+
+                if (response.eligible) {
+                    statusDiv.className = 'feedback-status status-eligible';
+                    statusDiv.textContent = '✅ You are eligible to submit feedback!';
+
+                    // Show safari information
+                    document.getElementById('safariInfo').innerHTML = `
+                        <h4>Your Safari Details</h4>
+                        <p><strong>Booking Reference:</strong> ${response.bookingRef}</p>
+                        <p><strong>Safari Date:</strong> ${SafariApp.formatDate(response.safariDate)}</p>
+                        <p><strong>Guide:</strong> ${response.guideName}</p>
+                        <p><strong>Driver:</strong> ${response.driverName}</p>
+                        <p><strong>Package:</strong> ${response.packageName}</p>
+                    `;
+
+                    // Show feedback form
+                    document.getElementById('feedbackFormContainer').style.display = 'block';
+                    document.getElementById('notEligibleMessage').style.display = 'none';
+
+                } else {
+                    statusDiv.className = 'feedback-status status-not-eligible';
+                    statusDiv.textContent = '❌ Booking not found or not eligible for feedback';
+
+                    document.getElementById('feedbackFormContainer').style.display = 'none';
+                    document.getElementById('notEligibleMessage').style.display = 'block';
+                }
+
+            } catch (error) {
+                statusDiv.className = 'feedback-status status-error';
+                statusDiv.textContent = '❌ Error checking booking status. Please try again.';
+
+                // For demo purposes, show mock eligibility
+                setTimeout(() => {
+                    if (bookingRef.toLowerCase().includes('rnw')) {
+                        statusDiv.className = 'feedback-status status-eligible';
+                        statusDiv.textContent = '✅ You are eligible to submit feedback!';
+
+                        document.getElementById('safariInfo').innerHTML = `
+                            <h4>Your Safari Details</h4>
+                            <p><strong>Booking Reference:</strong> ${bookingRef}</p>
+                            <p><strong>Safari Date:</strong> January 15, 2025</p>
+                            <p><strong>Guide:</strong> Kumara Perera</p>
+                            <p><strong>Driver:</strong> Nimal Silva</p>
+                            <p><strong>Package:</strong> Full Day Safari Experience</p>
+                        `;
+
+                        document.getElementById('feedbackFormContainer').style.display = 'block';
+                        document.getElementById('notEligibleMessage').style.display = 'none';
+                    } else {
+                        document.getElementById('feedbackFormContainer').style.display = 'none';
+                        document.getElementById('notEligibleMessage').style.display = 'block';
+                    }
+                }, 1000);
+            }
+        }
+
+        async function submitContactForm(e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+
+            try {
+                await SafariApp.API.post('/api/contact/submit', data);
+                SafariApp.Notifications.success('Message sent successfully! We will get back to you soon.');
+                e.target.reset();
+            } catch (error) {
+                SafariApp.Notifications.error('Failed to send message. Please try again.');
+            }
+        }
+
+        // Feedback form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const feedbackForm = document.getElementById('feedbackSubmissionForm');
+            if (feedbackForm) {
+                feedbackForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(e.target);
+                    const data = Object.fromEntries(formData);
+                    data.ratings = window.safariRatings || {};
+                    data.bookingRef = document.getElementById('bookingRef').value;
+
+                    try {
+                        await SafariApp.API.post('/api/feedback/submit', data);
+                        SafariApp.Notifications.success('Thank you for your feedback! Your review has been submitted.');
+                        e.target.reset();
+
+                        // Reset star ratings
+                        document.querySelectorAll('.star').forEach(star => {
+                            star.classList.remove('active');
+                            star.style.color = '#ddd';
+                        });
+
+                        window.safariRatings = {};
+
+                    } catch (error) {
+                        SafariApp.Notifications.error('Failed to submit feedback. Please try again.');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

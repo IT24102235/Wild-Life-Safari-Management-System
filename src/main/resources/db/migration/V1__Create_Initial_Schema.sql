@@ -1,0 +1,11 @@
+-- =============================================
+-- V1: Initial Schema Creation (SQL Server)
+-- WARNING: This file was previously empty and has been populated.
+-- If Flyway has already applied V1 in your existing DB, you MUST either:
+--   (a) Drop / recreate the database (dev only), or
+--   (b) Run `flyway repair` after updating this file (NOT recommended long-term), or
+--   (c) Keep the old empty file and create a new consolidated migration instead.
+-- Proceed only if it's safe to reset.
+-- =============================================
+
+-- (Intentionally left empty - originally applied as an empty baseline placeholder)

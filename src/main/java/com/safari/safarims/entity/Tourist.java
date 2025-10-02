@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "tourists")
@@ -38,6 +39,15 @@ public class Tourist {
 
     @Column(name = "dietary_preferences")
     private String dietaryPreferences;
+
+    // New relationship for preferred languages
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "tourist_preferred_languages",
+        joinColumns = @JoinColumn(name = "tourist_id"),
+        inverseJoinColumns = @JoinColumn(name = "language_id")
+    )
+    private Set<Language> preferredLanguages;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

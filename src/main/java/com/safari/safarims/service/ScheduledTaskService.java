@@ -30,17 +30,15 @@ public class ScheduledTaskService {
     @Scheduled(fixedRate = 30000) // Run every 30 seconds
     @Transactional
     public void checkPaymentExpiry() {
-        List<Payment> pendingPayments = paymentRepository.findByStatus(PaymentStatus.PENDING);
         LocalDateTime now = LocalDateTime.now();
-
-        for (Payment payment : pendingPayments) {
-            if (payment.getExpiresAt() != null && now.isAfter(payment.getExpiresAt())) {
-                try {
-                    paymentService.expirePayment(payment.getId());
-                    log.info("Expired payment for booking: {}", payment.getBooking().getId());
-                } catch (Exception e) {
-                    log.error("Error expiring payment {}: {}", payment.getId(), e.getMessage());
-                }
+        List<Payment> expired = paymentRepository.findExpiredPayments(PaymentStatus.PENDING, now);
+        if (expired.isEmpty()) return;
+        for (Payment payment : expired) {
+            try {
+                paymentService.expirePayment(payment.getId());
+                log.info("Expired payment {} for booking {}", payment.getId(), payment.getBooking().getId());
+            } catch (Exception e) {
+                log.error("Error expiring payment {}: {}", payment.getId(), e.getMessage());
             }
         }
     }
@@ -48,35 +46,28 @@ public class ScheduledTaskService {
     @Scheduled(fixedRate = 60000) // Run every minute
     @Transactional
     public void sendPaymentReminders() {
-        List<Payment> pendingPayments = paymentRepository.findByStatus(PaymentStatus.PENDING);
         LocalDateTime now = LocalDateTime.now();
+        LocalDateTime windowEnd = now.plusMinutes(2); // same 2‑minute lead time as original logic
+        List<Payment> expiringSoon = paymentRepository.findPaymentsExpiringBetween(PaymentStatus.PENDING, now, windowEnd);
+        if (expiringSoon.isEmpty()) return;
 
-        for (Payment payment : pendingPayments) {
-            if (payment.getExpiresAt() != null) {
-                LocalDateTime reminderTime = payment.getExpiresAt().minusMinutes(2); // 2 minutes before expiry
-
-                // Send reminder if it's time and not already expired
-                if (now.isAfter(reminderTime) && now.isBefore(payment.getExpiresAt())) {
-                    try {
-                        Booking booking = payment.getBooking();
-                        emailService.sendPaymentReminder(
-                            booking.getTourist().getUser().getEmail(),
-                            booking.getId().toString(),
-                            payment.getAmount().toString()
-                        );
-
-                        notificationService.notifyUser(
-                            booking.getTourist().getUser().getId(),
-                            "PAYMENT",
-                            "Payment Reminder",
-                            "Your payment for booking #" + booking.getId() + " will expire soon"
-                        );
-
-                        log.info("Payment reminder sent for booking: {}", booking.getId());
-                    } catch (Exception e) {
-                        log.error("Error sending payment reminder for payment {}: {}", payment.getId(), e.getMessage());
-                    }
-                }
+        for (Payment payment : expiringSoon) {
+            try {
+                Booking booking = payment.getBooking();
+                emailService.sendPaymentReminder(
+                    booking.getTourist().getUser().getEmail(),
+                    booking.getId().toString(),
+                    payment.getAmount().toString()
+                );
+                notificationService.notifyUser(
+                    booking.getTourist().getUser().getId(),
+                    "PAYMENT",
+                    "Payment Reminder",
+                    "Your payment for booking #" + booking.getId() + " will expire soon"
+                );
+                log.info("Payment reminder queued for booking {} (payment {})", booking.getId(), payment.getId());
+            } catch (Exception e) {
+                log.error("Error sending payment reminder for payment {}: {}", payment.getId(), e.getMessage());
             }
         }
     }
@@ -114,19 +105,12 @@ public class ScheduledTaskService {
     @Scheduled(cron = "0 0 1 * * ?") // Run daily at 1 AM
     public void generateDailyReport() {
         try {
-            LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
-
-            // Count bookings by status
             long newBookings = bookingRepository.findByStatus(BookingStatus.REQUESTED).size();
             long confirmedBookings = bookingRepository.findByStatus(BookingStatus.CONFIRMED).size();
             long cancelledBookings = bookingRepository.findByStatus(BookingStatus.CANCELLED).size();
-
-            // Count successful payments
             long successfulPayments = paymentRepository.findByStatus(PaymentStatus.SUCCESS).size();
-
             log.info("Daily Report - New: {}, Confirmed: {}, Cancelled: {}, Payments: {}",
                 newBookings, confirmedBookings, cancelledBookings, successfulPayments);
-
         } catch (Exception e) {
             log.error("Error generating daily report: {}", e.getMessage());
         }

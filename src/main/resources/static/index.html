@@ -3,153 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safari Management System - Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        safari: {
-                            green: '#2d5016',
-                            brown: '#8b4513',
-                            gold: '#ffd700'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <title>Ranweli Safari - Wild Adventures Await</title>
+    <meta name="description" content="Experience the ultimate safari adventure at Ranweli National Park. Book your wildlife expedition today!">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦁</text></svg>">
 </head>
-<body class="bg-gradient-to-br from-green-100 to-brown-100 min-h-screen flex items-center justify-center">
-    <div class="max-w-md w-full mx-4">
-        <div class="bg-white rounded-lg shadow-xl p-8">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-safari-green">Safari Management System</h1>
-                <p class="text-gray-600 mt-2">Welcome! Please sign in to continue</p>
-            </div>
-
-            <form id="loginForm" class="space-y-6">
-                <div>
-                    <label for="usernameOrEmail" class="block text-sm font-medium text-gray-700">Username or Email</label>
-                    <input type="text" id="usernameOrEmail" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green">
-                </div>
-
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="password" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-safari-green focus:border-safari-green">
-                </div>
-
-                <div>
-                    <button type="submit"
-                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-safari-green hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-safari-green">
-                        Sign In
-                    </button>
-                </div>
-            </form>
-
-            <div class="mt-6 text-center space-y-2">
-                <a href="forgot-password.html" class="text-sm text-safari-green hover:text-green-700">Forgot your password?</a>
-                <div class="text-sm text-gray-600">
-                    Don't have an account?
-                    <a href="signup.html" class="text-safari-green hover:text-green-700 font-medium">Sign up as Tourist</a>
-                </div>
-            </div>
-
-            <div id="errorMessage" class="mt-4 hidden">
-                <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm"></div>
-            </div>
-        </div>
-
-        <!-- Default Credentials Info -->
-        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 class="text-sm font-medium text-blue-800">Default Admin Credentials:</h3>
-            <p class="text-sm text-blue-600">Username: <code>admin1234</code></p>
-            <p class="text-sm text-blue-600">Password: <code>Admin@1234</code></p>
-        </div>
+<body>
+    <!-- Loading Animation -->
+    <div class="loader">
+        <div class="safari-loader"></div>
     </div>
 
-    <script>
-        const API_BASE = '/api/v1';
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">Ranweli Safari</a>
 
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+            <ul class="nav-links">
+                <li><a href="/" class="active">Home</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="visitor-guide.html">Visitor Guide</a></li>
+                <li><a href="what-to-do.html">What To Do</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
 
-            const usernameOrEmail = document.getElementById('usernameOrEmail').value;
-            const password = document.getElementById('password').value;
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="signup.html" class="btn btn-primary">Book Safari</a>
+            </div>
 
-            try {
-                const response = await fetch(`${API_BASE}/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        usernameOrEmail: usernameOrEmail,
-                        password: password
-                    })
-                });
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
 
-                const data = await response.json();
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="floating-elements">
+            <div class="floating-element">🦁</div>
+            <div class="floating-element">🐘</div>
+            <div class="floating-element">🦅</div>
+        </div>
 
-                if (response.ok && data.accessToken) {
-                    // Store tokens
-                    localStorage.setItem('accessToken', data.accessToken);
-                    localStorage.setItem('refreshToken', data.refreshToken);
-                    localStorage.setItem('userRole', data.role);
-                    localStorage.setItem('username', data.username);
+        <div class="hero-content">
+            <h1>Wild Adventures Await</h1>
+            <p>Experience the breathtaking wildlife of Ranweli National Park. Book your unforgettable safari adventure and witness nature's most magnificent creatures in their natural habitat.</p>
+            <div class="hero-buttons">
+                <a href="signup.html" class="btn btn-primary">Book Your Safari</a>
+                <a href="gallery.html" class="btn btn-outline">View Gallery</a>
+            </div>
+        </div>
+    </section>
 
-                    // Redirect based on role
-                    redirectToDashboard(data.role);
-                } else {
-                    showError(data.message || 'Login failed');
-                }
-            } catch (error) {
-                showError('Network error. Please try again.');
-                console.error('Login error:', error);
-            }
-        });
+    <!-- Features Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title fade-in">Why Choose Ranweli Safari?</h2>
+                <p class="section-subtitle fade-in">Discover what makes our safari experience truly exceptional</p>
+            </div>
 
-        function redirectToDashboard(role) {
-            const dashboards = {
-                'ADMIN': 'dashboards/admin.html',
-                'BOOKING_OFFICER': 'dashboards/booking-officer.html',
-                'TOUR_CREW_MANAGER': 'dashboards/crew-manager.html',
-                'MAINTENANCE_OFFICER': 'dashboards/maintenance-officer.html',
-                'TOUR_PACKAGE_BUILDER': 'dashboards/package-builder.html',
-                'DRIVER': 'dashboards/driver.html',
-                'GUIDE': 'dashboards/guide.html',
-                'MECHANIC': 'dashboards/mechanic.html',
-                'TOURIST': 'dashboards/tourist.html'
-            };
+            <div class="cards-grid">
+                <div class="card fade-in">
+                    <span class="card-icon">🦁</span>
+                    <h3>Expert Guides</h3>
+                    <p>Our experienced local guides know every corner of the park and will help you spot the most elusive wildlife while sharing fascinating stories about the ecosystem.</p>
+                </div>
 
-            const dashboard = dashboards[role];
-            if (dashboard) {
-                window.location.href = dashboard;
-            } else {
-                showError('Unknown user role');
-            }
-        }
+                <div class="card fade-in">
+                    <span class="card-icon">🚙</span>
+                    <h3>Premium Vehicles</h3>
+                    <p>Travel in comfort with our well-maintained 4x4 safari vehicles, equipped with pop-up roofs for optimal wildlife viewing and photography opportunities.</p>
+                </div>
 
-        function showError(message) {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.querySelector('div').textContent = message;
-            errorDiv.classList.remove('hidden');
+                <div class="card fade-in">
+                    <span class="card-icon">📸</span>
+                    <h3>Photography Focus</h3>
+                    <p>Perfect for wildlife photography enthusiasts. Our guides understand the best angles and timing to capture those once-in-a-lifetime shots.</p>
+                </div>
 
-            setTimeout(() => {
-                errorDiv.classList.add('hidden');
-            }, 5000);
-        }
+                <div class="card fade-in">
+                    <span class="card-icon">🌿</span>
+                    <h3>Eco-Friendly</h3>
+                    <p>We're committed to sustainable tourism practices that protect the wildlife and environment for future generations to enjoy.</p>
+                </div>
 
-        // Check if already logged in
-        if (localStorage.getItem('accessToken')) {
-            const role = localStorage.getItem('userRole');
-            if (role) {
-                redirectToDashboard(role);
-            }
-        }
-    </script>
+                <div class="card fade-in">
+                    <span class="card-icon">⭐</span>
+                    <h3>5-Star Rated</h3>
+                    <p>Consistently rated as the top safari experience in the region, with thousands of happy customers and glowing reviews.</p>
+                </div>
+
+                <div class="card fade-in">
+                    <span class="card-icon">🕐</span>
+                    <h3>Flexible Timing</h3>
+                    <p>Choose from morning, afternoon, or full-day safari packages. We also offer special sunset and sunrise tours for magical experiences.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wildlife Highlights -->
+    <section class="section" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title fade-in">Meet the Wildlife</h2>
+                <p class="section-subtitle fade-in">Encounter magnificent creatures in their natural habitat</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card fade-in">
+                    <span class="card-icon">🐘</span>
+                    <h3>Asian Elephants</h3>
+                    <p>Witness majestic herds of Asian elephants as they roam freely through the park. These gentle giants are often seen bathing in water holes.</p>
+                </div>
+
+                <div class="card fade-in">
+                    <span class="card-icon">🐆</span>
+                    <h3>Leopards</h3>
+                    <p>Ranweli is famous for its high leopard density. Spot these elusive big cats lounging on tree branches or stalking through the grasslands.</p>
+                </div>
+
+                <div class="card fade-in">
+                    <span class="card-icon">🦌</span>
+                    <h3>Spotted Deer</h3>
+                    <p>Graceful spotted deer are abundant throughout the park, often seen grazing in open meadows and serving as prey for larger predators.</p>
+                </div>
+
+                <div class="card fade-in">
+                    <span class="card-icon">🐻</span>
+                    <h3>Sloth Bears</h3>
+                    <p>These shaggy-coated bears are unique to Sri Lanka and can be spotted foraging for termites and fruits, especially during fruiting seasons.</p>
+                </div>
+
+                <div class="card fade-in">
+                    <span class="card-icon">🦅</span>
+                    <h3>Endemic Birds</h3>
+                    <p>Over 200 bird species call Ranweli home, including many endemic species like the Sri Lankan junglefowl and painted stork.</p>
+                </div>
+
+                <div class="card fade-in">
+                    <span class="card-icon">🐊</span>
+                    <h3>Crocodiles</h3>
+                    <p>Massive mugger crocodiles bask along the park's waterways. These ancient predators can grow up to 4 meters in length.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title fade-in">What Our Guests Say</h2>
+                <p class="section-subtitle fade-in">Read about amazing experiences from our satisfied customers</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card fade-in">
+                    <div class="star-rating">
+                        <span class="star active">★</span>
+                        <span class="star active">★</span>
+                        <span class="star active">★</span>
+                        <span class="star active">★</span>
+                        <span class="star active">★</span>
+                    </div>
+                    <p>"Absolutely incredible experience! We saw leopards, elephants, and so many birds. Our guide was knowledgeable and passionate. Highly recommend!"</p>
+                    <h4>- Sarah & John, UK</h4>
+                </div>
+
+                <div class="card fade-in">
+                    <div class="star-rating">
+                        <span class="star active">★</span>
+                        <span class="star active">★</span>
+                        <span class="star active">★</span>
+                        <span class="star active">★</span>
+                        <span class="star active">★</span>
+                    </div>
+                    <p>"The sunrise safari was magical. Watching elephants emerge from the mist at dawn was a moment I'll never forget. Perfect organization!"</p>
+                    <h4>- Michael Chen, Australia</h4>
+                </div>
+
+                <div class="card fade-in">
+                    <div class="star-rating">
+                        <span class="star active">★</span>
+                        <span class="star active">★</span>
+                        <span class="star active">★</span>
+                        <span class="star active">★</span>
+                        <span class="star active">★</span>
+                    </div>
+                    <p>"Photography tour exceeded expectations. Captured amazing shots of leopards and birds. Guide knew exactly where to find wildlife."</p>
+                    <h4>- Emma Rodriguez, Spain</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="section" style="background: var(--gradient-primary); color: white;">
+        <div class="container text-center">
+            <h2 class="fade-in" style="color: white; margin-bottom: 1rem;">Ready for Your Adventure?</h2>
+            <p class="fade-in" style="font-size: 1.2rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Don't miss out on the wildlife experience of a lifetime. Book your safari today and create memories that will last forever.
+            </p>
+            <div class="fade-in">
+                <a href="signup.html" class="btn btn-outline" style="background: white; color: var(--primary-color); margin-right: 1rem;">Book Now</a>
+                <a href="contact.html" class="btn" style="background: transparent; border: 2px solid white; color: white;">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: var(--primary-color); color: white; padding: 3rem 0 1rem;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                <div>
+                    <h3 style="margin-bottom: 1rem;">Ranweli Safari</h3>
+                    <p>Experience the wild beauty of Sri Lanka's premier national park with expert guides and premium service.</p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Quick Links</h4>
+                    <ul style="list-style: none;">
+                        <li><a href="gallery.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Gallery</a></li>
+                        <li><a href="visitor-guide.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Visitor Guide</a></li>
+                        <li><a href="what-to-do.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">What To Do</a></li>
+                        <li><a href="contact.html" style="color: white; text-decoration: none; margin-bottom: 0.5rem; display: block;">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Contact Info</h4>
+                    <p>📧 info@ranwelisafari.com</p>
+                    <p>📞 +94 77 123 4567</p>
+                    <p>📍 Ranweli National Park, Sri Lanka</p>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                <p>&copy; 2025 Ranweli Safari Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
 </body>
 </html>

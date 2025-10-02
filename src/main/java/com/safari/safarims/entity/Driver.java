@@ -24,22 +24,22 @@ public class Driver {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "full_name", nullable = false)
+    @Column(name = "full_name", nullable = false, length = 200)
     private String fullName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String phone;
 
-    @Column(name = "license_no", unique = true, nullable = false)
+    @Column(name = "license_no", unique = true, nullable = false, length = 100)
     private String licenseNo;
 
     @Column(name = "is_available")
     private Boolean isAvailable = true;
 
-    @Column(name = "created_by")
+    @Column(name = "created_by", length = 50)
     private String createdBy;
 
-    @Column(name = "updated_by")
+    @Column(name = "updated_by", length = 50)
     private String updatedBy;
 
     @Column(name = "created_at")
